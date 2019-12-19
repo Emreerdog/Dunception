@@ -27,6 +27,9 @@ ADefaultCharacter::ADefaultCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
+	GetCharacterMovement()->bOrientRotationToMovement = true; // Face in the direction we are moving..
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); // ...at this rotation rate
+
 }
 
 // Called when the game starts or when spawned
@@ -40,6 +43,8 @@ void ADefaultCharacter::BeginPlay()
 void ADefaultCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	_Velocity = GetVelocity().Y;
+	UE_LOG(LogTemp, Warning, TEXT("Velocity: %f"), _Velocity);
 
 }
 

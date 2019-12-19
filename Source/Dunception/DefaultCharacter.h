@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		UCameraComponent* Camera;
 
+	UPROPERTY()
+		float _Velocity;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
