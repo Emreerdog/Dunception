@@ -14,4 +14,6 @@ class DUNCEPTION_API ADunceptionGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	ADunceptionGameModeBase(const FObjectInitializer& ObjectInitializer);
 };
