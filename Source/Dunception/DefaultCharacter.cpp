@@ -3,6 +3,7 @@
 #include "DefaultCharacter.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
+#include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/InputComponent.h"
@@ -20,7 +21,7 @@ ADefaultCharacter::ADefaultCharacter()
 	SpringArm->bInheritPitch = false;
 	SpringArm->bInheritRoll = false;
 	SpringArm->bInheritYaw = false;
-
+	SpringArm->SetRelativeRotation(FRotator(-20.0f, 0.0f, 0.0f));
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->TargetArmLength = 600.0f;
 
@@ -28,8 +29,9 @@ ADefaultCharacter::ADefaultCharacter()
 	Camera->SetupAttachment(SpringArm);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Face in the direction we are moving..
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 900.0f, 0.0f); // ...at this rotation rate
 
+	CameraHandler.SetSpringArmAndCamera(SpringArm, Camera);
 }
 
 // Called when the game starts or when spawned
@@ -43,9 +45,29 @@ void ADefaultCharacter::BeginPlay()
 void ADefaultCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	_Velocity = GetVelocity().Y;
-	UE_LOG(LogTemp, Warning, TEXT("Velocity: %f"), _Velocity);
+	
+	movementStates._Velocity = GetVelocity().Y;
 
+	// If we move on +Y axis our velocity will be 600 but it is -600 on -Y axis
+	// We are doing this to make our Velocity always positive
+	if (movementStates._Velocity < 0) {
+		movementStates._Velocity = -movementStates._Velocity;
+	}
+
+	if (MovementPushedTime >= 1.0f) {
+		movementStates.bRunToIdleAnim = true;
+	}
+	else {
+		movementStates.bRunToIdleAnim = false;
+	}
+
+	if (GetCharacterMovement()->IsFalling()) {
+		movementStates.bIsOnAir = true;
+	}
+	else {
+		movementStates.bIsOnAir = false;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
 }
 
 // Called to bind functionality to input
@@ -55,20 +77,44 @@ void ADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAxis("SideMovement", this, &ADefaultCharacter::SideMovement);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ADefaultCharacter::_Jump);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ADefaultCharacter::Run);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &ADefaultCharacter::StopRun);
 }
 
+// Function that moves character right or left
 void ADefaultCharacter::SideMovement(float Value)
 {
 	if ((Controller != NULL) && Value != 0.0f) {
-		UE_LOG(LogTemp, Warning, TEXT("SideMovement Executed"));
-		FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::Y);
-		AddMovementInput(Direction, Value);
+		// Because of our game is 3D side scroller, movement event will only be happening on Z-Y axis
+		// Thats we put movement only on Y-axis
+		AddMovementInput(FVector(0.0f, 1.0f, 0.0f), Value);
+
+
+		// It counts how long we push the movement keys such as (A,S)
+		MovementPushedTime += GetWorld()->DeltaTimeSeconds;
+		movementStates.bSideMovementPressed = true;
 	}
+	else {
+		// If we don't push the movement keys exactly below events will happen
+		MovementPushedTime = 0.0f;
+		movementStates.bSideMovementPressed = false;
+	}
+}
+
+void ADefaultCharacter::Run()
+{
+	movementStates.bIsRunning = true;
+	GetCharacterMovement()->MaxWalkSpeed = 1000.0f;
+}
+
+void ADefaultCharacter::StopRun()
+{
+	movementStates.bIsRunning = false;
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 }
 
 void ADefaultCharacter::_Jump()
 {
-	GetCharacterMovement()->bForceNextFloorCheck = true;
 	bPressedJump = true;
 	UE_LOG(LogTemp, Warning, TEXT("Jump Executed"));
 }

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CameraAttributes.h"
+#include "MovementStates.h"
 #include "DefaultCharacter.generated.h"
 
 class USpringArmComponent;
@@ -26,8 +28,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		UCameraComponent* Camera;
 
-	UPROPERTY()
-		float _Velocity;
+	// Class that manipulates springarm and camera and make them to do something(Camera shake, zoom out/in, etc.)
+	CameraAttributes CameraHandler;
+
+	// Class that contains the initial states of our character like is it moving, are we flying, etc.
+	MovementStates movementStates;
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,7 +50,15 @@ private:
 	UFUNCTION()
 		void SideMovement(float Value);
 
+	UFUNCTION()
+		void Run();
+
+	UFUNCTION()
+		void StopRun();
+
 	// Z movement of character
 	UFUNCTION()
 		void _Jump();
+
+	float MovementPushedTime;
 };

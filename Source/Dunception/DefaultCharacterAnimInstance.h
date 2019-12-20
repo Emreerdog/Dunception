@@ -19,8 +19,20 @@ public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float Velocity;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bIsOnAir;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bRunToIdleAnim;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bSideMovementPressed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bIsRunning;
 
 private:
 	AActor* OwnerActor;
