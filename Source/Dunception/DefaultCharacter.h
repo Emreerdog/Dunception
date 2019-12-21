@@ -10,6 +10,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class USkeletalMeshComponent;
 
 UCLASS()
 class DUNCEPTION_API ADefaultCharacter : public ACharacter
@@ -27,6 +28,9 @@ public:
 	// Our Camera as we see
 	UPROPERTY(EditDefaultsOnly)
 		UCameraComponent* Camera;
+
+	UPROPERTY(EditDefaultsOnly)
+		USkeletalMeshComponent* Weapon;
 
 	// Class that manipulates springarm and camera and make them to do something(Camera shake, zoom out/in, etc.)
 	CameraAttributes CameraHandler;
@@ -60,5 +64,13 @@ private:
 	UFUNCTION()
 		void _Jump();
 
+	UFUNCTION()
+		void WeaponWield();
+
+	UFUNCTION()
+		void WieldTheWeapon();
+
 	float MovementPushedTime;
+	float WieldDelay;
+	FTimerHandle WieldDelayTimerHandle;
 };

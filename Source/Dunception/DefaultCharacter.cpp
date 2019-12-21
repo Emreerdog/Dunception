@@ -4,6 +4,8 @@
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/World.h"
+#include "TimerManager.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/InputComponent.h"
@@ -31,6 +33,14 @@ ADefaultCharacter::ADefaultCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Face in the direction we are moving..
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 900.0f, 0.0f); // ...at this rotation rate
 
+	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
+
+	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComponent"));
+	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponPocket"));
+	Weapon->SetRelativeLocation(FVector(-0.618f, -36.840001f, 3.030949f));
+	Weapon->SetRelativeRotation(FRotator(-9.800f, -1.75f, -259.8f));
+
 	CameraHandler.SetSpringArmAndCamera(SpringArm, Camera);
 }
 
@@ -45,7 +55,7 @@ void ADefaultCharacter::BeginPlay()
 void ADefaultCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	movementStates._Velocity = GetVelocity().Y;
 
 	// If we move on +Y axis our velocity will be 600 but it is -600 on -Y axis
@@ -54,7 +64,7 @@ void ADefaultCharacter::Tick(float DeltaTime)
 		movementStates._Velocity = -movementStates._Velocity;
 	}
 
-	if (MovementPushedTime >= 1.0f) {
+	if (MovementPushedTime >= 0.5f) {
 		movementStates.bRunToIdleAnim = true;
 	}
 	else {
@@ -75,10 +85,12 @@ void ADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAction("WieldWeapon", IE_Pressed, this, &ADefaultCharacter::WeaponWield);
 	PlayerInputComponent->BindAxis("SideMovement", this, &ADefaultCharacter::SideMovement);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ADefaultCharacter::_Jump);
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ADefaultCharacter::Run);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &ADefaultCharacter::StopRun);
+
 }
 
 // Function that moves character right or left
@@ -89,10 +101,11 @@ void ADefaultCharacter::SideMovement(float Value)
 		// Thats we put movement only on Y-axis
 		AddMovementInput(FVector(0.0f, 1.0f, 0.0f), Value);
 
-
 		// It counts how long we push the movement keys such as (A,S)
 		MovementPushedTime += GetWorld()->DeltaTimeSeconds;
 		movementStates.bSideMovementPressed = true;
+		// UE_LOG(LogTemp, Warning, TEXT("%f"), MovementPushedTime);
+
 	}
 	else {
 		// If we don't push the movement keys exactly below events will happen
@@ -104,7 +117,7 @@ void ADefaultCharacter::SideMovement(float Value)
 void ADefaultCharacter::Run()
 {
 	movementStates.bIsRunning = true;
-	GetCharacterMovement()->MaxWalkSpeed = 1000.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 850.0f;
 }
 
 void ADefaultCharacter::StopRun()
@@ -117,5 +130,19 @@ void ADefaultCharacter::_Jump()
 {
 	bPressedJump = true;
 	UE_LOG(LogTemp, Warning, TEXT("Jump Executed"));
+}
+
+void ADefaultCharacter::WeaponWield()
+{
+	movementStates.bIsWeaponWielded = true;
+	GetWorldTimerManager().SetTimer(WieldDelayTimerHandle, this, &ADefaultCharacter::WieldTheWeapon, 0.8f/3);
+}
+
+void ADefaultCharacter::WieldTheWeapon()
+{
+	GetWorldTimerManager().ClearTimer(WieldDelayTimerHandle);
+	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
+	Weapon->SetRelativeLocation(FVector(-0.01f, 3.34f, -15.8f));
+	Weapon->SetRelativeRotation(FRotator(18.9f, -12.4f, -11.1));
 }
 

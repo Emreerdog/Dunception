@@ -34,6 +34,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	bool bIsRunning;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bIsWeaponWielded;
+
 private:
 	AActor* OwnerActor;
 	USkeletalMeshComponent* OwnerMesh;
