@@ -135,7 +135,7 @@ void ADefaultCharacter::_Jump()
 void ADefaultCharacter::WeaponWield()
 {
 	movementStates.bIsWeaponWielded = true;
-	GetWorldTimerManager().SetTimer(WieldDelayTimerHandle, this, &ADefaultCharacter::WieldTheWeapon, 0.8f/3);
+	GetWorldTimerManager().SetTimer(WieldDelayTimerHandle, this, &ADefaultCharacter::WieldTheWeapon, 0.8f/2);
 }
 
 void ADefaultCharacter::WieldTheWeapon()
