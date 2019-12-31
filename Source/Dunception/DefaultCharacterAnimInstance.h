@@ -34,8 +34,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	bool bIsRunning;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat state")
 	bool bIsWeaponWielded;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat state")
+	TArray<bool> bAttackStates;
 
 private:
 	AActor* OwnerActor;

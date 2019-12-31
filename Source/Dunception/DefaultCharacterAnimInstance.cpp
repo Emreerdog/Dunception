@@ -32,7 +32,8 @@ void UDefaultCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			bSideMovementPressed = m_Character->movementStates.bSideMovementPressed;
 			bRunToIdleAnim = m_Character->movementStates.bRunToIdleAnim;
 			bIsRunning = m_Character->movementStates.bIsRunning;
-			bIsWeaponWielded = m_Character->movementStates.bIsWeaponWielded;
+			bIsWeaponWielded = m_Character->combatStates.bIsWeaponWielded;
+			bAttackStates = m_Character->combatStates.AttackStates;
 		}
 	}
 }

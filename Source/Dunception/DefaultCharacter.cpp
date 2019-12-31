@@ -6,6 +6,8 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "AMainHUD.h"
+#include "GameFramework/PlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/InputComponent.h"
@@ -42,20 +44,21 @@ ADefaultCharacter::ADefaultCharacter()
 	Weapon->SetRelativeRotation(FRotator(-9.800f, -1.75f, -259.8f));
 
 	CameraHandler.SetSpringArmAndCamera(SpringArm, Camera);
+	// GetController()->CastToPlayerController()->GetHUD()->Destroy();
+	// GetController()->CastToPlayerController()->ClientSetHUD(AAMainHUD::StaticClass());
 }
 
 // Called when the game starts or when spawned
 void ADefaultCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	MHUD = Cast<AAMainHUD>(GetController()->CastToPlayerController()->GetHUD());
 }
 
 // Called every frame
 void ADefaultCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	movementStates._Velocity = GetVelocity().Y;
 
 	// If we move on +Y axis our velocity will be 600 but it is -600 on -Y axis
@@ -77,7 +80,9 @@ void ADefaultCharacter::Tick(float DeltaTime)
 	else {
 		movementStates.bIsOnAir = false;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
+
+	ComboAttack();
+	// UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
 }
 
 // Called to bind functionality to input
@@ -90,6 +95,10 @@ void ADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ADefaultCharacter::_Jump);
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ADefaultCharacter::Run);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &ADefaultCharacter::StopRun);
+	PlayerInputComponent->BindAction("BasicAttack", IE_Pressed, this, &ADefaultCharacter::BasicAttack);
+	PlayerInputComponent->BindAction("BasicAttack", IE_Released, this, &ADefaultCharacter::StopBasicAttack);
+	PlayerInputComponent->BindAction("OpenControlPanel", IE_Pressed, this, &ADefaultCharacter::OpeningPanel);
+	PlayerInputComponent->BindAction("OpenControlPanel", IE_Released, this, &ADefaultCharacter::ClosingPanel);
 
 }
 
@@ -132,9 +141,60 @@ void ADefaultCharacter::_Jump()
 	UE_LOG(LogTemp, Warning, TEXT("Jump Executed"));
 }
 
+void ADefaultCharacter::BasicAttack()
+{
+	if (combatStates.bIsWeaponWielded) {
+		combatStates.bIsBasicAttack = true;
+	}
+}
+
+void ADefaultCharacter::ComboAttack()
+{
+	//if (combatStates.bIsBasicAttack) {
+	//	// If three of the attacks are zero it means that we were at idle state
+	//	if ((!combatStates.AttackStates[0] && !combatStates.AttackStates[1]) && !combatStates.AttackStates[2]) {
+	//		// Make first attack true
+	//		combatStates.AttackStates[0] = true;
+	//	}
+	//	if (combatStates.AttackStates[0]) {
+	//		combatStates.AttackTimer += GetWorld()->DeltaTimeSeconds;
+	//		float Result = combatStates.AttackAnimLength[0] - combatStates.AttackTimer;
+	//		// UE_LOG(LogTemp, Warning, TEXT("Attack1:%d AttackTimer:%f Result:%f %f"), combatStates.AttackStates[0], combatStates.AttackTimer, Result, combatStates.PreparingTime);
+	//		if ((Result <= 0.2f)) {
+	//			combatStates.PreparingTime += GetWorld()->DeltaTimeSeconds;
+	//			if (combatStates.PreparingTime >= 0.19f) {
+	//				UE_LOG(LogTemp, Warning, TEXT("Attack1:%d AttackTimer:%f Result:%f %f"), combatStates.AttackStates[0], combatStates.AttackTimer, Result, combatStates.PreparingTime);
+	//				combatStates.AttackStates[0] = false;
+	//				combatStates.AttackStates[1] = true;
+	//				combatStates.AttackTimer = 0.0f;
+	//				combatStates.PreparingTime = 0.0f;
+	//				UE_LOG(LogTemp, Warning, TEXT("Attack1:%d AttackTimer:%f Result:%f %f"), combatStates.AttackStates[0], combatStates.AttackTimer, Result, combatStates.PreparingTime);
+	//			}
+	//		}
+	//	}
+	//	else if (combatStates.AttackStates[1]) {
+	//		UE_LOG(LogTemp, Warning, TEXT("LOL"));
+
+	//		combatStates.AttackTimer += GetWorld()->DeltaTimeSeconds;
+	//		float Result = combatStates.AttackAnimLength[0] - combatStates.AttackTimer;
+	//		if ((Result <= 0.2f)) {
+
+	//		}
+	//	}
+	//	else if (combatStates.AttackStates[2]) {
+
+	//	}
+	//}	
+}
+
+void ADefaultCharacter::StopBasicAttack()
+{
+	combatStates.bIsBasicAttack = false;
+}
+
 void ADefaultCharacter::WeaponWield()
 {
-	movementStates.bIsWeaponWielded = true;
+	combatStates.bIsWeaponWielded = true;
 	GetWorldTimerManager().SetTimer(WieldDelayTimerHandle, this, &ADefaultCharacter::WieldTheWeapon, 0.8f/2);
 }
 
@@ -144,5 +204,15 @@ void ADefaultCharacter::WieldTheWeapon()
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
 	Weapon->SetRelativeLocation(FVector(-0.01f, 3.34f, -15.8f));
 	Weapon->SetRelativeRotation(FRotator(18.9f, -12.4f, -11.1));
+}
+
+void ADefaultCharacter::OpeningPanel()
+{
+	MHUD->EnablePanel();
+}
+
+void ADefaultCharacter::ClosingPanel()
+{
+	MHUD->DisablePanel();
 }
 

@@ -17,3 +17,8 @@ void CameraAttributes::SetSpringArmAndCamera(USpringArmComponent * SArm, UCamera
 	PlayerSpringArm = SArm;
 	PlayerCamera = Cam;
 }
+
+void CameraAttributes::DoShit()
+{
+	PlayerCamera->SetRelativeLocation(FVector(124.0f, 105.0f, 34.0f));
+}

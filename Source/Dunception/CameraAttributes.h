@@ -18,6 +18,7 @@ public:
 	CameraAttributes();
 	~CameraAttributes();
 	void SetSpringArmAndCamera(USpringArmComponent* SArm, UCameraComponent* Cam);
+	void DoShit();
 
 private:
 	USpringArmComponent* PlayerSpringArm;

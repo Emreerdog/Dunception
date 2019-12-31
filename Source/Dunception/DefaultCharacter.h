@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CameraAttributes.h"
+#include "AMainHUD.h"
+#include "CombatStates.h"
 #include "MovementStates.h"
 #include "DefaultCharacter.generated.h"
 
@@ -12,7 +14,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class USkeletalMeshComponent;
 
-UCLASS()
+UCLASS(BlueprintType)
 class DUNCEPTION_API ADefaultCharacter : public ACharacter
 {
 	GENERATED_BODY()
@@ -37,6 +39,13 @@ public:
 
 	// Class that contains the initial states of our character like is it moving, are we flying, etc.
 	MovementStates movementStates;
+
+	// Class that contains the initial combat states of our character like is weapon wielded, which attack type we are applying
+	UPROPERTY(BlueprintReadWrite)
+	FCombatStates combatStates;
+
+	UPROPERTY(BlueprintReadOnly)
+		AAMainHUD* MHUD;
 
 protected:
 	// Called when the game starts or when spawned
@@ -65,10 +74,25 @@ private:
 		void _Jump();
 
 	UFUNCTION()
+		void BasicAttack();
+
+	UFUNCTION()
+		void ComboAttack();
+
+	UFUNCTION()
+		void StopBasicAttack();
+
+	UFUNCTION()
 		void WeaponWield();
 
 	UFUNCTION()
 		void WieldTheWeapon();
+
+	UFUNCTION()
+		void OpeningPanel();
+
+	UFUNCTION()
+		void ClosingPanel();
 
 	float MovementPushedTime;
 	float WieldDelay;

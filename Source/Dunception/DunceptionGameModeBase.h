@@ -6,6 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "DunceptionGameModeBase.generated.h"
 
+class ADefaultCharacter;
+class AAMainHUD;
+
 /**
  * 
  */
@@ -16,4 +19,6 @@ class DUNCEPTION_API ADunceptionGameModeBase : public AGameModeBase
 	
 public:
 	ADunceptionGameModeBase(const FObjectInitializer& ObjectInitializer);
+	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
 };
