@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "DunceptionGameInstance.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "AMainHUD.h"
 #include "GameFramework/PlayerController.h"
@@ -60,6 +61,7 @@ void ADefaultCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	movementStates._Velocity = GetVelocity().Y;
+	Controller->CastToPlayerController()->ClientMessage("Selamlar");
 
 	// If we move on +Y axis our velocity will be 600 but it is -600 on -Y axis
 	// We are doing this to make our Velocity always positive
@@ -125,6 +127,13 @@ void ADefaultCharacter::SideMovement(float Value)
 
 void ADefaultCharacter::Run()
 {
+	UDunceptionGameInstance* DGI = GetGameInstance<UDunceptionGameInstance>();
+	if (DGI) {
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *DGI->GetName());
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Game instance cast failed"));
+	}
 	movementStates.bIsRunning = true;
 	GetCharacterMovement()->MaxWalkSpeed = 850.0f;
 }

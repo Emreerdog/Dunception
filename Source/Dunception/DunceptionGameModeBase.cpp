@@ -31,6 +31,7 @@ void ADunceptionGameModeBase::BeginPlay()
 	UE_LOG(LogTemp, Error, TEXT("FUCK"));
 }
 
+
 void ADunceptionGameModeBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
