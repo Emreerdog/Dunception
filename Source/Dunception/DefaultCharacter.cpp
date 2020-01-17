@@ -7,6 +7,7 @@
 #include "TimerManager.h"
 #include "DunceptionGameInstance.h"
 #include "Components/BoxComponent.h"
+#include "FireSword.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "AMainHUD.h"
 #include "GameFramework/PlayerController.h"
@@ -42,13 +43,10 @@ ADefaultCharacter::ADefaultCharacter()
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
 
-	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComponent"));
-	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponPocket"));
-	Weapon->SetRelativeLocation(FVector(-0.618f, -36.840001f, 3.030949f));
-	Weapon->SetRelativeRotation(FRotator(-9.800f, -1.75f, -259.8f));
-
-	WeaponHitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponHitBox"));
-	WeaponHitBox->AttachToComponent(Weapon, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	RightHand = CreateDefaultSubobject<USceneComponent>(TEXT("RightHand"));
+	RightHand->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponPocket"));
+	RightHand->SetRelativeLocation(FVector(-0.618f, -36.840001f, 3.030949f));
+	RightHand->SetRelativeRotation(FRotator(-9.800f, -1.75f, -259.8f));
 
 	CameraHandler.SetSpringArmAndCamera(SpringArm, Camera);
 	// GetController()->CastToPlayerController()->GetHUD()->Destroy();
@@ -59,6 +57,15 @@ ADefaultCharacter::ADefaultCharacter()
 void ADefaultCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.bNoFail = false;
+	SpawnParameters.Instigator = NULL;
+	SpawnParameters.Owner = this;
+
+	mSword = GetWorld()->SpawnActor<AFireSword>(SpawnParameters);
+	// mSword->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform, "WeaponSocket");
+	mSword->AttachToComponent(RightHand, FAttachmentTransformRules::SnapToTargetIncludingScale);
 	MHUD = Cast<AAMainHUD>(GetController()->CastToPlayerController()->GetHUD());
 }
 
@@ -132,6 +139,13 @@ void ADefaultCharacter::SideMovement(float Value)
 
 void ADefaultCharacter::Run()
 {
+	if (mSword) {
+		UE_LOG(LogTemp, Warning, TEXT("Sword exist"));
+		mSword->FirstAttack();
+		mSword->SecondAttack();
+		mSword->ThirdAttack();
+	}
+
 	UDunceptionGameInstance* DGI = GetGameInstance<UDunceptionGameInstance>();
 	if (DGI) {
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *DGI->GetName());
@@ -215,9 +229,9 @@ void ADefaultCharacter::WeaponWield()
 void ADefaultCharacter::WieldTheWeapon()
 {
 	GetWorldTimerManager().ClearTimer(WieldDelayTimerHandle);
-	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
-	Weapon->SetRelativeLocation(FVector(-0.01f, 3.34f, -15.8f));
-	Weapon->SetRelativeRotation(FRotator(18.9f, -12.4f, -11.1));
+	RightHand->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
+	RightHand->SetRelativeLocation(FVector(-0.01f, 3.34f, -15.8f));
+	RightHand->SetRelativeRotation(FRotator(18.9f, -12.4f, -11.1));
 }
 
 void ADefaultCharacter::OpeningPanel()

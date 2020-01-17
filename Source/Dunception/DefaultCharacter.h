@@ -14,6 +14,8 @@ class USpringArmComponent;
 class UCameraComponent;
 class USkeletalMeshComponent;
 class UBoxComponent;
+class IWeaponInterface;
+class AFireSword;
 
 UCLASS(BlueprintType)
 class DUNCEPTION_API ADefaultCharacter : public ACharacter
@@ -33,10 +35,7 @@ public:
 		UCameraComponent* Camera;
 
 	UPROPERTY(EditDefaultsOnly)
-		USkeletalMeshComponent* Weapon;
-
-	UPROPERTY(EditDefaultsOnly)
-		UBoxComponent* WeaponHitBox;
+		USceneComponent* RightHand;
 
 	// Class that manipulates springarm and camera and make them to do something(Camera shake, zoom out/in, etc.)
 	CameraAttributes CameraHandler;
@@ -50,6 +49,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 		AAMainHUD* MHUD;
+
+	IWeaponInterface* WeaponInterface;
+	AFireSword* mSword;
 
 protected:
 	// Called when the game starts or when spawned
