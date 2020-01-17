@@ -13,6 +13,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class USkeletalMeshComponent;
+class UBoxComponent;
 
 UCLASS(BlueprintType)
 class DUNCEPTION_API ADefaultCharacter : public ACharacter
@@ -33,6 +34,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 		USkeletalMeshComponent* Weapon;
+
+	UPROPERTY(EditDefaultsOnly)
+		UBoxComponent* WeaponHitBox;
 
 	// Class that manipulates springarm and camera and make them to do something(Camera shake, zoom out/in, etc.)
 	CameraAttributes CameraHandler;

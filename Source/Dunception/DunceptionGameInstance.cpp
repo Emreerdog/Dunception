@@ -10,6 +10,7 @@ void UDunceptionGameInstance::Init()
 	
 	UE_LOG(LogTemp, Warning, TEXT("Fucking shitasdasd"));
 	FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UDunceptionGameInstance::BeginLoadingScreen);
+	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UDunceptionGameInstance::EndLoadingScreen);
 }
 
 void UDunceptionGameInstance::BeginLoadingScreen(const FString& MapName) 
@@ -22,5 +23,5 @@ void UDunceptionGameInstance::BeginLoadingScreen(const FString& MapName)
 
 void UDunceptionGameInstance::EndLoadingScreen(UWorld* InLoadedWorld) 
 {
-	UE_LOG(LogTemp, Warning, TEXT("End Loading Screen"));
+	UE_LOG(LogTemp, Warning, TEXT("Babus"));
 }

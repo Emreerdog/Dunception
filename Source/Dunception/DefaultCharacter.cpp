@@ -6,6 +6,7 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "DunceptionGameInstance.h"
+#include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "AMainHUD.h"
 #include "GameFramework/PlayerController.h"
@@ -35,6 +36,8 @@ ADefaultCharacter::ADefaultCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Face in the direction we are moving..
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 900.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
+	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
@@ -43,6 +46,9 @@ ADefaultCharacter::ADefaultCharacter()
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponPocket"));
 	Weapon->SetRelativeLocation(FVector(-0.618f, -36.840001f, 3.030949f));
 	Weapon->SetRelativeRotation(FRotator(-9.800f, -1.75f, -259.8f));
+
+	WeaponHitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponHitBox"));
+	WeaponHitBox->AttachToComponent(Weapon, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
 	CameraHandler.SetSpringArmAndCamera(SpringArm, Camera);
 	// GetController()->CastToPlayerController()->GetHUD()->Destroy();
@@ -61,7 +67,6 @@ void ADefaultCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	movementStates._Velocity = GetVelocity().Y;
-	Controller->CastToPlayerController()->ClientMessage("Selamlar");
 
 	// If we move on +Y axis our velocity will be 600 but it is -600 on -Y axis
 	// We are doing this to make our Velocity always positive
