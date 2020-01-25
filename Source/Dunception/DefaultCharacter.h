@@ -50,7 +50,6 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		AAMainHUD* MHUD;
 
-	IWeaponInterface* WeaponInterface;
 	AFireSword* mSword;
 
 protected:
@@ -63,6 +62,15 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION()
+		void SetIsOverlappingWithMerchant(bool MerchantOverlap);
+
+	UFUNCTION()
+		bool IsOverlappingWithMerchant();
+
+	UFUNCTION()
+		bool IsInteractionPressed();
 
 private:
 	// Side movement of character
@@ -100,7 +108,13 @@ private:
 	UFUNCTION()
 		void ClosingPanel();
 
+	UFUNCTION()
+		void InteractionPressed();
+
 	float MovementPushedTime;
 	float WieldDelay;
 	FTimerHandle WieldDelayTimerHandle;
+	bool bIsMerchantOverlap;
+	bool bIsInteractionPressed;
+
 };

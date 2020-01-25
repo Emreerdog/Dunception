@@ -64,9 +64,10 @@ void ADefaultCharacter::BeginPlay()
 	SpawnParameters.Owner = this;
 
 	mSword = GetWorld()->SpawnActor<AFireSword>(SpawnParameters);
-	// mSword->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform, "WeaponSocket");
 	mSword->AttachToComponent(RightHand, FAttachmentTransformRules::SnapToTargetIncludingScale);
+
 	MHUD = Cast<AAMainHUD>(GetController()->CastToPlayerController()->GetHUD());
+
 }
 
 // Called every frame
@@ -74,7 +75,6 @@ void ADefaultCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	movementStates._Velocity = GetVelocity().Y;
-
 	// If we move on +Y axis our velocity will be 600 but it is -600 on -Y axis
 	// We are doing this to make our Velocity always positive
 	if (movementStates._Velocity < 0) {
@@ -95,7 +95,7 @@ void ADefaultCharacter::Tick(float DeltaTime)
 		movementStates.bIsOnAir = false;
 	}
 
-	ComboAttack();
+	// UE_LOG(LogTemp, Warning, TEXT("%d"), bIsMerchantOverlap);
 	// UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
 }
 
@@ -113,7 +113,13 @@ void ADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("BasicAttack", IE_Released, this, &ADefaultCharacter::StopBasicAttack);
 	PlayerInputComponent->BindAction("OpenControlPanel", IE_Pressed, this, &ADefaultCharacter::OpeningPanel);
 	PlayerInputComponent->BindAction("OpenControlPanel", IE_Released, this, &ADefaultCharacter::ClosingPanel);
+	PlayerInputComponent->BindAction("InteractWithThings", IE_Pressed, this, &ADefaultCharacter::InteractionPressed);
 
+}
+
+void ADefaultCharacter::SetIsOverlappingWithMerchant(bool MerchantOverlap)
+{
+	this->bIsMerchantOverlap = MerchantOverlap;
 }
 
 // Function that moves character right or left
@@ -139,20 +145,12 @@ void ADefaultCharacter::SideMovement(float Value)
 
 void ADefaultCharacter::Run()
 {
+	// Checking if the weapon interface and weapon we have is not a nullptr
+	
 	if (mSword) {
-		UE_LOG(LogTemp, Warning, TEXT("Sword exist"));
-		mSword->FirstAttack();
-		mSword->SecondAttack();
-		mSword->ThirdAttack();
+		
 	}
 
-	UDunceptionGameInstance* DGI = GetGameInstance<UDunceptionGameInstance>();
-	if (DGI) {
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *DGI->GetName());
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Game instance cast failed"));
-	}
 	movementStates.bIsRunning = true;
 	GetCharacterMovement()->MaxWalkSpeed = 850.0f;
 }
@@ -242,5 +240,20 @@ void ADefaultCharacter::OpeningPanel()
 void ADefaultCharacter::ClosingPanel()
 {
 	MHUD->DisablePanel();
+}
+
+void ADefaultCharacter::InteractionPressed()
+{
+	bIsInteractionPressed = true;
+}
+
+bool ADefaultCharacter::IsOverlappingWithMerchant()
+{
+	return bIsMerchantOverlap;
+}
+
+bool ADefaultCharacter::IsInteractionPressed()
+{
+	return bIsInteractionPressed;
 }
 

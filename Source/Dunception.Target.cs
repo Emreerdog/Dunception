@@ -10,5 +10,6 @@ public class DunceptionTarget : TargetRules
 		Type = TargetType.Game;
 
 		ExtraModuleNames.AddRange( new string[] { "Dunception" } );
+
 	}
 }

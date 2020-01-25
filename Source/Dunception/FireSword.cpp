@@ -22,6 +22,11 @@ AFireSword::AFireSword()
 	FireSwordHitBox->RelativeScale3D = FVector(0.25f, 0.125f, 1.5f);
 	FireSwordHitBox->RelativeLocation = FVector(0.0f, 0.0f, 90.0f);
 
+	WeaponAttributes.Name = "FireSword";
+	WeaponAttributes.Description = "Some strong thing";
+	WeaponAttributes.Damage = 65.0f;
+	WeaponAttributes.Price = 200.0f;
+
 }
 
 void AFireSword::FirstAttack()

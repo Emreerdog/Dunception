@@ -21,7 +21,15 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		ESlateVisibility ControlPanelVisibility;
 
+	UFUNCTION()
+		bool IsMerchantPanelOn();
+
 	void EnablePanel();
 	void DisablePanel();
 
+	void EnableMerchantPanel();
+	void DisableMerchantPanel();
+
+private:
+	bool bIsMerchantPanelEnabled;
 };
