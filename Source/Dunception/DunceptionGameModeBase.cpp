@@ -3,6 +3,7 @@
 #include "DunceptionGameModeBase.h"
 #include "AMainHUD.h"
 #include "DefaultCharacter.h"
+#include "MainMapState.h"
 #include "ConstructorHelpers.h"
 
 ADunceptionGameModeBase::ADunceptionGameModeBase(const FObjectInitializer& ObjectInitializer) 
@@ -10,6 +11,11 @@ ADunceptionGameModeBase::ADunceptionGameModeBase(const FObjectInitializer& Objec
 
 	static ConstructorHelpers::FClassFinder<APawn> DefaultCharacter(TEXT("Pawn '/Game/BluePrints/DefaultCharacter_BP/DefaultCharacter.DefaultCharacter_C'"));
 	static ConstructorHelpers::FClassFinder<AAMainHUD> MainHUD(TEXT("HUD'/Script/Dunception.AMainHUD'"));
+	static ConstructorHelpers::FClassFinder<AMainMapState> MainState(TEXT("Class'/Script/Dunception.MainMapState'"));
+
+	if (MainState.Class) {
+		GameStateClass = MainState.Class;
+	}
 
 	if (MainHUD.Class) {
 		HUDClass = MainHUD.Class;

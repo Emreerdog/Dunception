@@ -9,6 +9,7 @@
 class USkeletalMeshComponent;
 class UBoxComponent;
 class ADefaultCharacter;
+class AMainMapState;
 
 UCLASS(BlueprintType)
 class DUNCEPTION_API AWeaponMerchant : public AActor
@@ -31,11 +32,38 @@ public:
 	UFUNCTION()
 		void DisableMerchantPanel(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void AssignWeaponRowsAndColoumns();
+
 	UPROPERTY(BlueprintReadOnly)
 		bool bIsCharacterOverlapping = false;
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bIsCharacterInteracting = false;
+
+	UPROPERTY(BlueprintReadOnly)
+		int Coloumn;
+
+	UPROPERTY(BlueprintReadOnly)
+		int Row;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bIsAssignmentFinished = false;
+
+	UPROPERTY(BlueprintReadOnly)
+		int WeaponID;
+
+	UPROPERTY(BlueprintReadOnly)
+		float WeaponDamage;
+
+	UPROPERTY(BlueprintReadOnly)
+		FString WeaponName;
+
+	UPROPERTY(BlueprintReadOnly)
+		FString WeaponDescription;
+
+	UPROPERTY(BlueprintReadOnly)
+		float WeaponCost;
 
 protected:
 	// Called when the game starts or when spawned
@@ -47,4 +75,6 @@ public:
 
 private:
 	ADefaultCharacter* OverlappedGuy;
+	AMainMapState* MainMapState;
+
 };

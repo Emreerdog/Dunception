@@ -29,18 +29,18 @@ void UDunceptionGameInstance::Init()
 	// FILE* f1;
 	// fopen_s(&f1, TCHAR_TO_ANSI(*dirforbin), "wb");
 
-	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
-
-	const FString& ContentDir = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(*FPaths::GameContentDir());
-	const FString& NewDir = ContentDir + "Weapons";
-
-	if (!PlatformFile.DirectoryExists(*NewDir)) {
-		if (!PlatformFile.CreateDirectory(*NewDir)) {
-			FMessageDialog::Debugf(FText::FromString("Directory couldn't created"));
-		}
-	}
-
-	const FString& DirForBin = NewDir + "/" + "Weapons.wesf";
+	// IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	// 
+	// const FString& ContentDir = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(*FPaths::GameContentDir());
+	// const FString& NewDir = ContentDir + "Weapons";
+	// 
+	// UE_LOG(LogTemp, Warning, TEXT("%s"), *ContentDir);
+	// 
+	// if (!PlatformFile.DirectoryExists(*NewDir)) {
+	// 	if (!PlatformFile.CreateDirectory(*NewDir)) {
+	// 		FMessageDialog::Debugf(FText::FromString("Directory couldn't created"));
+	// 	}
+	// }
 
 	// BA = m_weaponAttributes << BA;
 

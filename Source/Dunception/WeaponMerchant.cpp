@@ -3,6 +3,8 @@
 #include "WeaponMerchant.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DefaultCharacter.h"
+#include "MainMapState.h"
+#include "WeaponInterface.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -18,6 +20,9 @@ AWeaponMerchant::AWeaponMerchant()
 	MerchantInteractionArea->AttachToComponent(MerchantMesh, FAttachmentTransformRules::SnapToTargetIncludingScale);
 	MerchantInteractionArea->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
+	Row = 0;
+	Coloumn = 0;
+
 }
 
 // Called when the game starts or when spawned
@@ -28,12 +33,36 @@ void AWeaponMerchant::BeginPlay()
 	MerchantInteractionArea->OnComponentBeginOverlap.AddDynamic(this, &AWeaponMerchant::EnableMerchantPanel);
 	MerchantInteractionArea->OnComponentEndOverlap.AddDynamic(this, &AWeaponMerchant::DisableMerchantPanel);
 
+	MainMapState = Cast<AMainMapState>(GetWorld()->GetGameState());
+
+	if (MainMapState) {
+		for (int i = 0; i < MainMapState->AllWeapons.Num(); i++) {
+			WeaponID = MainMapState->AllWeapons[i].ID;
+			WeaponDamage = MainMapState->AllWeapons[i].Damage;
+			WeaponDescription = MainMapState->AllWeapons[i].Description;
+			WeaponName = MainMapState->AllWeapons[i].Name;
+			WeaponCost = MainMapState->AllWeapons[i].Price;
+
+			AssignWeaponRowsAndColoumns();
+			Coloumn++;
+			if (Coloumn == 4) {
+				Row++;
+				Coloumn = 0;
+			}
+			bIsAssignmentFinished = true;
+		}
+	}
+
 }
 
 // Called every frame
 void AWeaponMerchant::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (MainMapState) {
+		// UE_LOG(LogTemp, Warning, TEXT("%d"), MainMapState->AllWeapons.Num());
+	}
 
 	if (OverlappedGuy) {
 		bIsCharacterInteracting = OverlappedGuy->IsInteractionPressed();

@@ -22,4 +22,19 @@ public:
 
 	virtual void Init() override;
 
+	UPROPERTY(BlueprintReadWrite)
+		int WeaponID;
+
+	UPROPERTY(BlueprintReadWrite)
+		float WeaponDamage;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString WeaponName;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString WeaponDescription;
+
+	UPROPERTY(BlueprintReadWrite)
+		float WeaponCost;
+
 };

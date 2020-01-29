@@ -4,6 +4,9 @@
 #include "Components/PointLightComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Components/BoxComponent.h"
+#include "HAL/FileManager.h"
+#include "GenericPlatform/GenericPlatformFile.h"
+#include "HAL/PlatformFilemanager.h"
 #include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
@@ -12,10 +15,19 @@ AFireSword::AFireSword()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
+	const FString& ContentDir = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(*FPaths::GameContentDir());
+	const FString& Type = "SkeletalMesh";
+	const FString& MeshDir = "SkeletalMeshes/Weapons/Swords/sword.sword";
+
+	const FString& LastDir = "SkeletalMesh'/Game/SkeletalMeshes/Weapons/Swords/sword.sword'";
+
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *LastDir);
+
 	FireSword = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FireSword"));
 	FireSword->SetupAttachment(RootComponent);
-	FireSword->SetSkeletalMesh(LoadObject<USkeletalMesh>(NULL, TEXT("SkeletalMesh'/Game/SkeletalMeshes/Weapons/Swords/sword.sword'"), NULL, LOAD_None, NULL));
-	
+	FireSword->SetSkeletalMesh(Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), NULL, *LastDir)));
+
 	FireSwordHitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("FireSwordHitbox"));
 	FireSwordHitBox->SetupAttachment(FireSword);
 	FireSwordHitBox->bHiddenInGame = false;

@@ -8,6 +8,7 @@
 #include "AMainHUD.h"
 #include "CombatStates.h"
 #include "MovementStates.h"
+#include "WeaponInterface.h"
 #include "DefaultCharacter.generated.h"
 
 class USpringArmComponent;
