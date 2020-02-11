@@ -95,6 +95,8 @@ void ADefaultCharacter::Tick(float DeltaTime)
 		movementStates.bIsOnAir = false;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("%f"), GetCharacterMovement()->GetWalkableFloorAngle());
+
 	// UE_LOG(LogTemp, Warning, TEXT("%d sdfgsg"), bIsMerchantOverlap);
 	// UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
 }
