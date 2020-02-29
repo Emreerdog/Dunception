@@ -18,6 +18,7 @@ public:
 	bool bRunToIdleAnim = false; // It will be true when character's velocity equal or more than 600 for 1.5 seconds
 	bool bSideMovementPressed = false; // It'll be true when the movement key is pressed
 	bool bIsRunning = false;
+	bool bAbleToMove = true;
 
 private:
 

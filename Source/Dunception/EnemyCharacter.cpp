@@ -34,14 +34,14 @@ void AEnemyCharacter::DecreaseHealth(float DecreaseAmount)
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetActorLocation(FVector(5.0f, GetActorLocation().Y, GetActorLocation().Z));
 }
 
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	UE_LOG(LogTemp, Warning, TEXT("%f"), Health);
 }
 
 // Called to bind functionality to input

@@ -24,11 +24,11 @@ public:
 	virtual void SecondAttack() override;
 	virtual void ThirdAttack() override;
 
-	UPROPERTY(EditDefaultsOnly)
-	USkeletalMeshComponent* FireSword;
+	UFUNCTION()
+	virtual void OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) override;
 
 	UPROPERTY(EditDefaultsOnly)
-	UBoxComponent* FireSwordHitBox;
+	USkeletalMeshComponent* FireSword;
 
 protected:
 	// Called when the game starts or when spawned

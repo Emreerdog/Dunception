@@ -4,20 +4,7 @@
 
 FCombatStates::FCombatStates()
 {
-	AttackAnimLength.Add(1.48f); // Melee Attack Downward
-	AttackAnimLength.Add(2.11f); // Melee Attack high 360
-	AttackAnimLength.Add(1.55f); // Melee Attack 360 low
-	AttackAnimLength.Add(2.08f);
-
-	AttackStates.Add(0);
-	AttackStates.Add(0);
-	AttackStates.Add(0);
-
-	bIsWeaponWielded = false;
-	AttackTimer = 0.0f;
-	bIsBasicAttack = false;
-	PreparingTime = 0.0f;
-
+	
 }
 
 FCombatStates::~FCombatStates()
@@ -26,12 +13,12 @@ FCombatStates::~FCombatStates()
 
 void FCombatStates::AttacksToDefault()
 {
-	// AttackAnimLength[0] = 1.48f;
-	// AttackAnimLength[1] = 2.11f;
-	// AttackAnimLength[2] = 1.55f;
-	// AttackAnimLength[3] = 2.08f;
-
-	// AttackStates.Add(0);
-	// AttackStates.Add(0);
-	// AttackStates.Add(0);
+	bool bIsWeaponWielded = false; 
+	bool bIsBasicAttack = false; 
+	bool bIsOnSequence = false;
+	bool bIsA1 = false;
+	bool bIsA2 = false;
+	bool bIsA3 = false;
+	float AttackTimer = 0.0f; 
+	float PreparingTime = 0.0f;
 }

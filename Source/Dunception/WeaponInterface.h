@@ -4,6 +4,7 @@
 
 #include "Object.h"
 #include "Interface.h"
+#include "Components/BoxComponent.h"
 #include "Array.h"
 #include "WeaponInterface.generated.h"
 
@@ -60,6 +61,10 @@ public:
 
 	virtual void SetAttributes(FWeaponAttributes NewAttributes);
 
+	virtual void OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
+
+	}
+
 	/*Adding weapon to the weapon database*/
 	static void AddWeaponToDB(IWeaponInterface* WeaponToAdd);
 
@@ -72,11 +77,10 @@ public:
 	/*Returns how many weapons we have*/
 	static int GetWeaponCount();
 
-	
 protected:
 	/*Weapon attribute structure for weapons*/
 	FWeaponAttributes WeaponAttributes;
-
+	UBoxComponent *W_HitBox;
 private:
 	static TArray<IWeaponInterface*> Weapons;
 };

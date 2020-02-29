@@ -33,7 +33,12 @@ void UDefaultCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			bRunToIdleAnim = m_Character->movementStates.bRunToIdleAnim;
 			bIsRunning = m_Character->movementStates.bIsRunning;
 			bIsWeaponWielded = m_Character->combatStates.bIsWeaponWielded;
-			bAttackStates = m_Character->combatStates.AttackStates;
+			bIsAttacking = m_Character->combatStates.bIsBasicAttack;
+			bIsOnSequence = m_Character->combatStates.bIsOnSequence;
+			bIsA1 = m_Character->combatStates.bIsA1;
+			bIsA2 = m_Character->combatStates.bIsA2;
+			bIsA3 = m_Character->combatStates.bIsA3;
+			//bAttackStates[0] = m_Character->combatStates.bIsBasicAttack;
 		}
 	}
 }

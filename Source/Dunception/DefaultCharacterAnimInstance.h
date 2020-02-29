@@ -40,6 +40,21 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat state")
 	TArray<bool> bAttackStates;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat state")
+		bool bIsAttacking;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat state")
+		bool bIsOnSequence;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat state")
+		bool bIsA1;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat state")
+		bool bIsA2;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat state")
+		bool bIsA3;
+
 private:
 	AActor* OwnerActor;
 	USkeletalMeshComponent* OwnerMesh;

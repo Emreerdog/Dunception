@@ -66,6 +66,8 @@ void ADefaultCharacter::BeginPlay()
 	mSword = GetWorld()->SpawnActor<AFireSword>(SpawnParameters);
 	mSword->AttachToComponent(RightHand, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
+	WeaponHolder = mSword;
+
 	MHUD = Cast<AAMainHUD>(GetController()->CastToPlayerController()->GetHUD());
 
 }
@@ -81,21 +83,14 @@ void ADefaultCharacter::Tick(float DeltaTime)
 		movementStates._Velocity = -movementStates._Velocity;
 	}
 
-	if (MovementPushedTime >= 0.5f) {
-		movementStates.bRunToIdleAnim = true;
-	}
-	else {
-		movementStates.bRunToIdleAnim = false;
-	}
-
 	if (GetCharacterMovement()->IsFalling()) {
 		movementStates.bIsOnAir = true;
 	}
 	else {
 		movementStates.bIsOnAir = false;
 	}
-
-	// UE_LOG(LogTemp, Warning, TEXT("%d sdfgsg"), bIsMerchantOverlap);
+	
+	// UE_LOG(LogTemp, Warning, TEXT("%d%d%d%d%d   %d"), combatStates.bIsBasicAttack, combatStates.bIsOnSequence, combatStates.bIsA1, combatStates.bIsA2, combatStates.bIsA3, (!combatStates.bIsA2) && (!combatStates.bIsA3));
 	// UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
 }
 
@@ -126,15 +121,16 @@ void ADefaultCharacter::SetIsOverlappingWithMerchant(bool MerchantOverlap)
 void ADefaultCharacter::SideMovement(float Value)
 {
 	if ((Controller != NULL) && Value != 0.0f) {
-		// Because of our game is 3D side scroller, movement event will only be happening on Z-Y axis
-		// Thats we put movement only on Y-axis
-		AddMovementInput(FVector(0.0f, 1.0f, 0.0f), Value);
+		if (movementStates.bAbleToMove) {
+			// Because of our game is 3D side scroller, movement event will only be happening on Z-Y axis
+			// Thats we put movement only on Y-axis
+			AddMovementInput(FVector(0.0f, 1.0f, 0.0f), Value);
 
-		// It counts how long we push the movement keys such as (A,S)
-		MovementPushedTime += GetWorld()->DeltaTimeSeconds;
-		movementStates.bSideMovementPressed = true;
-		// UE_LOG(LogTemp, Warning, TEXT("%f"), MovementPushedTime);
-
+			// It counts how long we push the movement keys such as (A,S)
+			MovementPushedTime += GetWorld()->DeltaTimeSeconds;
+			movementStates.bSideMovementPressed = true;
+			// UE_LOG(LogTemp, Warning, TEXT("%f"), MovementPushedTime);
+		}
 	}
 	else {
 		// If we don't push the movement keys exactly below events will happen
@@ -163,19 +159,69 @@ void ADefaultCharacter::StopRun()
 
 void ADefaultCharacter::_Jump()
 {
-	bPressedJump = true;
-	UE_LOG(LogTemp, Warning, TEXT("Jump Executed"));
+	if (movementStates.bAbleToMove) {
+		bPressedJump = true;
+		UE_LOG(LogTemp, Warning, TEXT("Jump Executed"));
+	}
 }
 
 void ADefaultCharacter::BasicAttack()
 {
-	if (combatStates.bIsWeaponWielded) {
+	AttacksToDefault();
+	if (combatStates.bIsWeaponWielded) 
+	{
 		combatStates.bIsBasicAttack = true;
+		combatStates.bIsOnSequence = true;
+		if ((!combatStates.bIsA2) && (!combatStates.bIsA3)) 
+		{
+			if (!combatStates.bIsA1) 
+			{
+				movementStates.bAbleToMove = false;
+				combatStates.bIsA1 = true;
+				WeaponHolder->FirstAttack();
+				GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::SecondAttack, 2.0f);
+			}
+		}
 	}
 }
 
-void ADefaultCharacter::ComboAttack()
+void ADefaultCharacter::SecondAttack() 
 {
+	GetWorldTimerManager().ClearTimer(ComboTimer);
+	if ((combatStates.bIsBasicAttack && combatStates.bIsOnSequence) && combatStates.bIsA1) {
+		WeaponHolder->SecondAttack();
+		combatStates.bIsA2 = true;
+		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::ThirdAttack, 2.0f);
+	}
+	else {
+		movementStates.bAbleToMove = true;
+		AttacksToDefault();
+	}
+}
+
+void ADefaultCharacter::ThirdAttack() 
+{
+	GetWorldTimerManager().ClearTimer(ComboTimer);
+	if ((combatStates.bIsBasicAttack && combatStates.bIsOnSequence) && (combatStates.bIsA1 && combatStates.bIsA2)) {
+		combatStates.bIsA3 = true;
+		WeaponHolder->ThirdAttack();
+		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::BackToFirstAttack, 2.0f);
+	}
+	else {
+		movementStates.bAbleToMove = true;
+		AttacksToDefault();
+	}
+}
+
+void ADefaultCharacter::BackToFirstAttack()
+{
+	GetWorldTimerManager().ClearTimer(ComboTimer);
+	if (combatStates.bIsBasicAttack) {
+		BasicAttack();
+	}
+	else {
+		AttacksToDefault();
+	}
 	//if (combatStates.bIsBasicAttack) {
 	//	// If three of the attacks are zero it means that we were at idle state
 	//	if ((!combatStates.AttackStates[0] && !combatStates.AttackStates[1]) && !combatStates.AttackStates[2]) {
@@ -216,6 +262,15 @@ void ADefaultCharacter::ComboAttack()
 void ADefaultCharacter::StopBasicAttack()
 {
 	combatStates.bIsBasicAttack = false;
+}
+
+void ADefaultCharacter::AttacksToDefault()
+{
+	combatStates.bIsBasicAttack = false;
+	combatStates.bIsOnSequence = false;
+	combatStates.bIsA1 = false;
+	combatStates.bIsA2 = false;
+	combatStates.bIsA3 = false;
 }
 
 void ADefaultCharacter::WeaponWield()

@@ -52,6 +52,7 @@ public:
 		AAMainHUD* MHUD;
 
 	AFireSword* mSword;
+	IWeaponInterface* WeaponHolder;
 
 protected:
 	// Called when the game starts or when spawned
@@ -92,10 +93,19 @@ private:
 		void BasicAttack();
 
 	UFUNCTION()
-		void ComboAttack();
+		void SecondAttack();
+
+	UFUNCTION()
+		void ThirdAttack();
+
+	UFUNCTION()
+		void BackToFirstAttack();
 
 	UFUNCTION()
 		void StopBasicAttack();
+
+	UFUNCTION()
+		void AttacksToDefault();
 
 	UFUNCTION()
 		void WeaponWield();
@@ -115,6 +125,7 @@ private:
 	float MovementPushedTime;
 	float WieldDelay;
 	FTimerHandle WieldDelayTimerHandle;
+	FTimerHandle ComboTimer;
 	bool bIsMerchantOverlap;
 	bool bIsInteractionPressed;
 
