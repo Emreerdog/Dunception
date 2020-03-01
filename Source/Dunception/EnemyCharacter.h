@@ -10,7 +10,7 @@ class USpringArmComponent;
 class USkeletalMeshComponent;
 class UBoxComponent;
 
-UCLASS()
+UCLASS(BlueprintType)
 class DUNCEPTION_API AEnemyCharacter : public ACharacter
 {
 	GENERATED_BODY()
@@ -19,13 +19,13 @@ public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void SetHealth(float NewHealth); // Different from decreasehealth
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		float GetHealth();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void DecreaseHealth(float DecreaseAmount);
 
 protected:
