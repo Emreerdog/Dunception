@@ -2,6 +2,10 @@
 
 #include "EnemyCharacter.h"
 #include "Engine/World.h"
+#include "Components/CapsuleComponent.h"
+#include "DunceptionGameModeBase.h"
+#include "DefaultCharacter.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -40,8 +44,7 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
-	SetActorLocation(FVector(260.0f, GetActorLocation().Y, GetActorLocation().Z));
+	SetActorLocation(FVector(5.0f, GetActorLocation().Y, GetActorLocation().Z));
 }
 
 // Called every frame
@@ -64,9 +67,27 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	}
 
 	if (Health <= 0.0f) {
-
+		static bool bIsDead;
+		ADunceptionGameModeBase* tempGMode = Cast<ADunceptionGameModeBase>(GetWorld()->GetAuthGameMode());
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		GetMesh()->SetSimulatePhysics(true);
+		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+		if (!bIsDead) {
+			bIsDead = true;
+			if (tempGMode == nullptr) {
+				UE_LOG(LogTemp, Warning, TEXT("Game mode doesn't handled"));
+			}
+			else {
+				ADefaultCharacter* tempOurGuy = Cast<ADefaultCharacter>(tempGMode->DefaultPawnClass.GetDefaultObject());
+				if (tempOurGuy == nullptr) {
+					UE_LOG(LogTemp, Warning, TEXT("Enemy doesn't see our guy"));
+				}
+				else {
+					GetMesh()->AddRadialImpulse(tempOurGuy->GetMesh()->GetComponentLocation() + 50.0f, 100000.0f, 100000.0f, ERadialImpulseFalloff::RIF_MAX);
+				}
+			}
+		}
 	}
-
 }
 
 // Called to bind functionality to input

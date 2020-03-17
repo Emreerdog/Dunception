@@ -20,7 +20,7 @@ ADunceptionGameModeBase::ADunceptionGameModeBase(const FObjectInitializer& Objec
 	if (MainHUD.Class) {
 		HUDClass = MainHUD.Class;
 	}
-
+	
 	if (DefaultCharacter.Class != NULL) {
 		DefaultPawnClass = DefaultCharacter.Class;
 		UE_LOG(LogTemp, Warning, TEXT("DefaultCharacter possesed %s"), *DefaultPawnClass->GetName());
