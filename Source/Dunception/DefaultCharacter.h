@@ -38,6 +38,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		USceneComponent* RightHand;
 
+	UPROPERTY(EditDefaultsOnly)
+		USceneComponent* DamageBoxLocation;
+
 	// Class that manipulates springarm and camera and make them to do something(Camera shake, zoom out/in, etc.)
 	CameraAttributes CameraHandler;
 
@@ -93,10 +96,16 @@ private:
 		void BasicAttack();
 
 	UFUNCTION()
+		void AttackMoment();
+
+	UFUNCTION()
 		void SecondAttack();
 
 	UFUNCTION()
 		void ThirdAttack();
+
+	UFUNCTION()
+		void ComboToBase();
 
 	UFUNCTION()
 		void BackToFirstAttack();
@@ -126,6 +135,8 @@ private:
 	float WieldDelay;
 	FTimerHandle WieldDelayTimerHandle;
 	FTimerHandle ComboTimer;
+	FTimerHandle AttackMomentTimer;
+	FTimerHandle ComboToBaseTimer;
 	bool bIsMerchantOverlap;
 	bool bIsInteractionPressed;
 

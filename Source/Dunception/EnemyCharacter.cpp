@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "EnemyCharacter.h"
+#include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -12,6 +13,7 @@ AEnemyCharacter::AEnemyCharacter()
 	Health = 100.0f;
 	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
+	GetCharacterMovement()->Mass = 2.0f;
 
 }
 
@@ -25,8 +27,11 @@ float AEnemyCharacter::GetHealth()
 	return Health;
 }
 
-void AEnemyCharacter::DecreaseHealth(float DecreaseAmount)
+void AEnemyCharacter::DecreaseHealth(float DecreaseAmount, bool bImpulseOnImpact, FVector ImpulseDirection, float ImpulseTime)
 {
+	bIsImpulse = bImpulseOnImpact;
+	ImpulseTimer = ImpulseTime;
+	ImpulseDir = ImpulseDirection;
 	Health -= DecreaseAmount;
 }
 
@@ -34,14 +39,34 @@ void AEnemyCharacter::DecreaseHealth(float DecreaseAmount)
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	SetActorLocation(FVector(5.0f, GetActorLocation().Y, GetActorLocation().Z));
+
+	
+	SetActorLocation(FVector(260.0f, GetActorLocation().Y, GetActorLocation().Z));
 }
 
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), Health);
+	
+	if (bIsImpulse) 
+	{
+		Time += DeltaTime;
+		if (Time >= ImpulseTimer) 
+		{
+			bIsImpulse = false;
+			Time = 0.0f;
+		}
+		else {
+			// UE_LOG(LogTemp, Warning, TEXT("Impulse working"));
+			GetCharacterMovement()->AddImpulse(ImpulseDir);
+		}
+	}
+
+	if (Health <= 0.0f) {
+
+	}
+
 }
 
 // Called to bind functionality to input

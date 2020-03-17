@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "HAL/FileManager.h"
 #include "EnemyCharacter.h"
+#include "TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DefaultCharacter.h"
 #include "GenericPlatform/GenericPlatformFile.h"
@@ -29,10 +30,10 @@ AFireSword::AFireSword()
 	FireSword->SetupAttachment(RootComponent);
 	FireSword->SetSkeletalMesh(Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), NULL, *LastDir)));
 
-	W_HitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("FireSwordHitbox"));
-	W_HitBox->SetupAttachment(FireSword);
+	W_HitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Damage Box"));
 	W_HitBox->bHiddenInGame = false;
-	W_HitBox->RelativeScale3D = FVector(0.25f, 0.125f, 1.5f);
+	W_HitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	W_HitBox->RelativeScale3D = FVector(1.25f, 3.0f, 1.75f);
 	W_HitBox->RelativeLocation = FVector(0.0f, 0.0f, 90.0f);
 	W_HitBox->OnComponentBeginOverlap.AddDynamic(this, &AFireSword::OnWeaponOverlap);
 
@@ -63,23 +64,28 @@ void AFireSword::ThirdAttack()
 
 void AFireSword::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor * OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->IsA<AEnemyCharacter>()) {
-		AEnemyCharacter* tempEnemy = Cast<AEnemyCharacter>(OtherActor);
-		if (tempEnemy) 
-		{
-			tempEnemy->DecreaseHealth(WeaponAttributes.Damage);
-		}
+	UE_LOG(LogTemp, Warning, TEXT("SDFGSDGS"));
+	AEnemyCharacter* tempEnemy = Cast<AEnemyCharacter>(OtherActor);
+	if (tempEnemy) {
+		bIsForcing = true;
+		GetWorldTimerManager().SetTimer(ForceTimer, this, &AFireSword::DeactivateForce, 0.50f);
+		tempEnemy->DecreaseHealth(50.0f, true, FVector(0.0f, 130.0f, 0.0f), 0.1f);
 	}
-	else {
-		// Nothing
-	}
+	// DisableDamageBox();
+	// W_HitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AFireSword::DeactivateForce()
+{
+	bIsForcing = false;
 }
 
 // Called when the game starts or when spawned
 void AFireSword::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	W_HitBox->DetachFromParent();
+	OwnerGuy = Cast<ADefaultCharacter>(GetOwner());
 }
 
 // Called every frame
@@ -87,11 +93,10 @@ void AFireSword::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	//if (ADefaultCharacter* TempDefault = Cast<ADefaultCharacter>(GetOwner())) {
-	//	if (TempDefault->combatStates.bIsBasicAttack) {
-	//		UE_LOG(LogTemp, Warning, TEXT("Forcing"));
-	//		TempDefault->GetCharacterMovement()->AddImpulse(FVector(0.0f, 1000.0f, 0.0f));
-	//	}
-	//}
+
+	W_HitBox->SetWorldLocation(OwnerGuy->DamageBoxLocation->GetComponentLocation());
+	if (bIsForcing) {
+		OwnerGuy->GetCharacterMovement()->AddImpulse(FVector(0.0f, -150.0f, 0.0f));
+	}
 }
 

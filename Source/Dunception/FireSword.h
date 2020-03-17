@@ -10,6 +10,7 @@
 class USkeletalMeshComponent;
 class UPointLightComponent;
 class UBoxComponent;
+class ADefaultCharacter;
 
 UCLASS()
 class DUNCEPTION_API AFireSword : public AActor, public IWeaponInterface
@@ -30,6 +31,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	USkeletalMeshComponent* FireSword;
 
+	UFUNCTION()
+		void DeactivateForce();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -39,5 +43,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	
+	ADefaultCharacter* OwnerGuy;
+	FTimerHandle ForceTimer;
+	bool bIsForcing = false;
 };

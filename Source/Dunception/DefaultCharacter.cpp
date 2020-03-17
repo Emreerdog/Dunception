@@ -31,12 +31,13 @@ ADefaultCharacter::ADefaultCharacter()
 	SpringArm->SetRelativeRotation(FRotator(-20.0f, 0.0f, 0.0f));
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->TargetArmLength = 600.0f;
+	SpringArm->bEnableCameraLag = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Face in the direction we are moving..
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 900.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 1500.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 
@@ -49,6 +50,10 @@ ADefaultCharacter::ADefaultCharacter()
 	RightHand->SetRelativeRotation(FRotator(-9.800f, -1.75f, -259.8f));
 
 	CameraHandler.SetSpringArmAndCamera(SpringArm, Camera);
+
+	DamageBoxLocation = CreateDefaultSubobject<USceneComponent>(TEXT("DamageBoxLocation"));
+	DamageBoxLocation->SetupAttachment(GetMesh());
+
 	// GetController()->CastToPlayerController()->GetHUD()->Destroy();
 	// GetController()->CastToPlayerController()->ClientSetHUD(AAMainHUD::StaticClass());
 }
@@ -90,8 +95,11 @@ void ADefaultCharacter::Tick(float DeltaTime)
 		movementStates.bIsOnAir = false;
 	}
 	
-	// UE_LOG(LogTemp, Warning, TEXT("%d%d%d%d%d   %d"), combatStates.bIsBasicAttack, combatStates.bIsOnSequence, combatStates.bIsA1, combatStates.bIsA2, combatStates.bIsA3, (!combatStates.bIsA2) && (!combatStates.bIsA3));
+	// UE_LOG(LogTemp, Warning, TEXT("%d%d%d%d%d"), combatStates.bIsBasicAttack, combatStates.bIsOnSequence, combatStates.bIsA1, combatStates.bIsA2, combatStates.bIsA3);
 	// UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
+	// UE_LOG(LogTemp, Warning, TEXT("%f"), GetWorldTimerManager().GetTimerRemaining(ComboTimer));
+	// UE_LOG(LogTemp, Warning, TEXT("%f"), GetCharacterMovement()->Mass);
+
 }
 
 // Called to bind functionality to input
@@ -129,13 +137,18 @@ void ADefaultCharacter::SideMovement(float Value)
 			// It counts how long we push the movement keys such as (A,S)
 			MovementPushedTime += GetWorld()->DeltaTimeSeconds;
 			movementStates.bSideMovementPressed = true;
-			// UE_LOG(LogTemp, Warning, TEXT("%f"), MovementPushedTime);
+			if (Value > 0.0f) {
+				// TODO Camera Lag
+			}
+			else {
+				
+			}
 		}
 	}
 	else {
 		// If we don't push the movement keys exactly below events will happen
 		MovementPushedTime = 0.0f;
-		movementStates.bSideMovementPressed = false;
+		movementStates.bSideMovementPressed = false;		
 	}
 }
 
@@ -167,22 +180,29 @@ void ADefaultCharacter::_Jump()
 
 void ADefaultCharacter::BasicAttack()
 {
-	AttacksToDefault();
 	if (combatStates.bIsWeaponWielded) 
 	{
 		combatStates.bIsBasicAttack = true;
-		combatStates.bIsOnSequence = true;
 		if ((!combatStates.bIsA2) && (!combatStates.bIsA3)) 
 		{
 			if (!combatStates.bIsA1) 
 			{
+				combatStates.bIsOnSequence = true;
 				movementStates.bAbleToMove = false;
 				combatStates.bIsA1 = true;
 				WeaponHolder->FirstAttack();
-				GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::SecondAttack, 2.0f);
+				GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.45f);
+				GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::SecondAttack, 0.9f);
 			}
 		}
 	}
+}
+
+void ADefaultCharacter::AttackMoment()
+{
+	GetWorldTimerManager().ClearTimer(AttackMomentTimer);
+	WeaponHolder->EnableDamageBox();
+	WeaponHolder->DisableDamageBox();
 }
 
 void ADefaultCharacter::SecondAttack() 
@@ -191,11 +211,11 @@ void ADefaultCharacter::SecondAttack()
 	if ((combatStates.bIsBasicAttack && combatStates.bIsOnSequence) && combatStates.bIsA1) {
 		WeaponHolder->SecondAttack();
 		combatStates.bIsA2 = true;
-		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::ThirdAttack, 2.0f);
+		GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.65f);
+		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::ThirdAttack, 1.0f);
 	}
 	else {
-		movementStates.bAbleToMove = true;
-		AttacksToDefault();
+		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.233f);
 	}
 }
 
@@ -205,22 +225,30 @@ void ADefaultCharacter::ThirdAttack()
 	if ((combatStates.bIsBasicAttack && combatStates.bIsOnSequence) && (combatStates.bIsA1 && combatStates.bIsA2)) {
 		combatStates.bIsA3 = true;
 		WeaponHolder->ThirdAttack();
-		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::BackToFirstAttack, 2.0f);
+		GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.70f);
+		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::BackToFirstAttack, 1.2f);
 	}
 	else {
-		movementStates.bAbleToMove = true;
-		AttacksToDefault();
+		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.65f);
 	}
+}
+
+void ADefaultCharacter::ComboToBase()
+{
+	GetWorldTimerManager().ClearTimer(ComboToBaseTimer);
+	movementStates.bAbleToMove = true;
+	AttacksToDefault();
 }
 
 void ADefaultCharacter::BackToFirstAttack()
 {
 	GetWorldTimerManager().ClearTimer(ComboTimer);
 	if (combatStates.bIsBasicAttack) {
+		AttacksToDefault();
 		BasicAttack();
 	}
 	else {
-		AttacksToDefault();
+		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.9f);
 	}
 	//if (combatStates.bIsBasicAttack) {
 	//	// If three of the attacks are zero it means that we were at idle state
@@ -275,8 +303,10 @@ void ADefaultCharacter::AttacksToDefault()
 
 void ADefaultCharacter::WeaponWield()
 {
-	combatStates.bIsWeaponWielded = true;
-	GetWorldTimerManager().SetTimer(WieldDelayTimerHandle, this, &ADefaultCharacter::WieldTheWeapon, 0.8f/2);
+	if (!combatStates.bIsWeaponWielded) {
+		combatStates.bIsWeaponWielded = true;
+		GetWorldTimerManager().SetTimer(WieldDelayTimerHandle, this, &ADefaultCharacter::WieldTheWeapon, 0.8f / 2);
+	}
 }
 
 void ADefaultCharacter::WieldTheWeapon()

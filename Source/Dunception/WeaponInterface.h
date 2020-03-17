@@ -65,6 +65,13 @@ public:
 
 	}
 
+	virtual void EnableDamageBox() {
+		W_HitBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+	virtual void DisableDamageBox() {
+		W_HitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
 	/*Adding weapon to the weapon database*/
 	static void AddWeaponToDB(IWeaponInterface* WeaponToAdd);
 

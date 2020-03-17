@@ -43,5 +43,9 @@ struct DUNCEPTION_API FCombatStates
 	UPROPERTY(BlueprintReadWrite)
 	float PreparingTime;
 
+	bool bAttackMomentA1 = false;
+	bool bAttackMomentA2 = false;
+	bool bAttackMomentA3 = false;
+
 	void AttacksToDefault();
 };
