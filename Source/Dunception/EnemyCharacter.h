@@ -25,19 +25,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 		float GetHealth();
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 	UFUNCTION()
 		void DecreaseHealth(float DecreaseAmount, bool bImpulseOnImpact = false, FVector ImpulseDirection = FVector::ZeroVector, float ImpulseTime = 0.0f);
-=======
-=======
->>>>>>> 580fb23d5d1bf6e6e0cb22745077f5dc9d4fe1b3
-=======
->>>>>>> 580fb23d5d1bf6e6e0cb22745077f5dc9d4fe1b3
-	UFUNCTION(BlueprintCallable)
-		void DecreaseHealth(float DecreaseAmount);
->>>>>>> 580fb23d5d1bf6e6e0cb22745077f5dc9d4fe1b3
 
 protected:
 	// Called when the game starts or when spawned
