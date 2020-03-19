@@ -7,6 +7,7 @@
 #include "TimerManager.h"
 #include "DunceptionGameInstance.h"
 #include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "FireSword.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "AMainHUD.h"
@@ -54,6 +55,8 @@ ADefaultCharacter::ADefaultCharacter()
 	DamageBoxLocation = CreateDefaultSubobject<USceneComponent>(TEXT("DamageBoxLocation"));
 	DamageBoxLocation->SetupAttachment(GetMesh());
 
+	Health = 100.0f;
+
 	// GetController()->CastToPlayerController()->GetHUD()->Destroy();
 	// GetController()->CastToPlayerController()->ClientSetHUD(AAMainHUD::StaticClass());
 }
@@ -99,6 +102,13 @@ void ADefaultCharacter::Tick(float DeltaTime)
 	// UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
 	UE_LOG(LogTemp, Warning, TEXT("%f"), GetWorldTimerManager().GetTimerRemaining(ComboTimer));
 	// UE_LOG(LogTemp, Warning, TEXT("%f"), GetCharacterMovement()->Mass);
+	if (Health <= 0.0f) {
+		DisableInput(GetController()->CastToPlayerController());
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		GetMesh()->SetSimulatePhysics(true);
+		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+		WeaponHolder->DisableDamageBox();
+	}
 }
 
 // Called to bind functionality to input
@@ -348,5 +358,20 @@ bool ADefaultCharacter::IsOverlappingWithMerchant()
 bool ADefaultCharacter::IsInteractionPressed()
 {
 	return bIsInteractionPressed;
+}
+
+float ADefaultCharacter::GetHealth()
+{
+	return Health;
+}
+
+void ADefaultCharacter::DecreaseHealth(float DecreaseAmount)
+{
+	Health -= DecreaseAmount;
+}
+
+void ADefaultCharacter::SetHealth(float NewHealth)
+{
+	Health = NewHealth;
 }
 

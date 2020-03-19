@@ -83,7 +83,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 					UE_LOG(LogTemp, Warning, TEXT("Enemy doesn't see our guy"));
 				}
 				else {
-					GetMesh()->AddImpulse(FVector(0.0f, 50000.0f, 1000.0f), FName("spine_02"));
+					GetMesh()->AddImpulse(FVector(0.0f, 50000.0f, 1000.0f), FName("head"));
 					// GetMesh()->AddRadialImpulse(tempOurGuy->GetMesh()->GetComponentLocation() + 50.0f, 1000.0f, 100000.0f, ERadialImpulseFalloff::RIF_Constant);
 				}
 			}

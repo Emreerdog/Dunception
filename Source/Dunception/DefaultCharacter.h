@@ -83,6 +83,15 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void ArmorHitSound();
 
+	UFUNCTION(BlueprintCallable)
+		float GetHealth();
+
+	UFUNCTION(BlueprintCallable)
+		void DecreaseHealth(float DecreaseAmount);
+
+	UFUNCTION(BlueprintCallable)
+		void SetHealth(float NewHealth);
+
 private:
 	// Side movement of character
 	UFUNCTION()
@@ -145,5 +154,5 @@ private:
 	FTimerHandle ComboToBaseTimer;
 	bool bIsMerchantOverlap;
 	bool bIsInteractionPressed;
-
+	float Health;
 };
