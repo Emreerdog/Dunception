@@ -77,6 +77,12 @@ public:
 	UFUNCTION()
 		bool IsInteractionPressed();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void WooshSound();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void ArmorHitSound();
+
 private:
 	// Side movement of character
 	UFUNCTION()

@@ -97,9 +97,8 @@ void ADefaultCharacter::Tick(float DeltaTime)
 	
 	// UE_LOG(LogTemp, Warning, TEXT("%d%d%d%d%d"), combatStates.bIsBasicAttack, combatStates.bIsOnSequence, combatStates.bIsA1, combatStates.bIsA2, combatStates.bIsA3);
 	// UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
-	// UE_LOG(LogTemp, Warning, TEXT("%f"), GetWorldTimerManager().GetTimerRemaining(ComboTimer));
+	UE_LOG(LogTemp, Warning, TEXT("%f"), GetWorldTimerManager().GetTimerRemaining(ComboTimer));
 	// UE_LOG(LogTemp, Warning, TEXT("%f"), GetCharacterMovement()->Mass);
-
 }
 
 // Called to bind functionality to input
@@ -200,9 +199,13 @@ void ADefaultCharacter::BasicAttack()
 
 void ADefaultCharacter::AttackMoment()
 {
+	WooshSound();
 	GetWorldTimerManager().ClearTimer(AttackMomentTimer);
 	WeaponHolder->EnableDamageBox();
 	WeaponHolder->DisableDamageBox();
+	if (WeaponHolder->IsHitEnemy()) {
+		ArmorHitSound();
+	}
 }
 
 void ADefaultCharacter::SecondAttack() 
@@ -289,7 +292,12 @@ void ADefaultCharacter::BackToFirstAttack()
 
 void ADefaultCharacter::StopBasicAttack()
 {
-	combatStates.bIsBasicAttack = false;
+	if (GetWorldTimerManager().GetTimerRemaining(ComboTimer) <= 0.2f) {
+		combatStates.bIsBasicAttack = true;
+	}
+	else {
+		combatStates.bIsBasicAttack = false;
+	}
 }
 
 void ADefaultCharacter::AttacksToDefault()

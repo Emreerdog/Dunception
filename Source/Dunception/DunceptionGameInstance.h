@@ -22,6 +22,9 @@ public:
 
 	virtual void Init() override;
 
+	UFUNCTION(BlueprintCallable)
+		FVector2D GetGameViewPortSize();
+
 	UPROPERTY(BlueprintReadWrite)
 		int WeaponID;
 

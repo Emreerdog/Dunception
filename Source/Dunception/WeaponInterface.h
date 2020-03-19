@@ -72,6 +72,10 @@ public:
 		W_HitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
+	virtual bool IsHitEnemy() {
+		return bIsHitEnemy;
+	}
+
 	/*Adding weapon to the weapon database*/
 	static void AddWeaponToDB(IWeaponInterface* WeaponToAdd);
 
@@ -88,6 +92,7 @@ protected:
 	/*Weapon attribute structure for weapons*/
 	FWeaponAttributes WeaponAttributes;
 	UBoxComponent *W_HitBox;
+	bool bIsHitEnemy;
 private:
 	static TArray<IWeaponInterface*> Weapons;
 };

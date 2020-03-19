@@ -4,6 +4,7 @@
 #include "MoviePlayer.h"
 #include "Misc/MessageDialog.h"
 #include "HAL/FileManager.h"
+#include "Engine.h"
 #include "GenericPlatform/GenericPlatformFile.h"
 #include "HAL/PlatformFilemanager.h"
 #include "FireSword.h"
@@ -47,6 +48,17 @@ void UDunceptionGameInstance::Init()
 	FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UDunceptionGameInstance::BeginLoadingScreen);
 	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UDunceptionGameInstance::EndLoadingScreen);
 
+}
+
+FVector2D UDunceptionGameInstance::GetGameViewPortSize()
+{
+	FVector2D Result = FVector2D::ZeroVector;
+
+	if (GEngine && GEngine->GameViewport) {
+		GEngine->GameViewport->GetViewportSize(Result);
+	}
+
+	return Result;
 }
 
 void UDunceptionGameInstance::BeginLoadingScreen(const FString& MapName) 

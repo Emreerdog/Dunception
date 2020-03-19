@@ -67,6 +67,7 @@ void AFireSword::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	UE_LOG(LogTemp, Warning, TEXT("SDFGSDGS"));
 	AEnemyCharacter* tempEnemy = Cast<AEnemyCharacter>(OtherActor);
 	if (tempEnemy) {
+		bIsHitEnemy = true;
 		bIsForcing = true;
 		GetWorldTimerManager().SetTimer(ForceTimer, this, &AFireSword::DeactivateForce, 0.50f);
 		tempEnemy->DecreaseHealth(50.0f, true, FVector(0.0f, 130.0f, 0.0f), 0.1f);
@@ -78,6 +79,7 @@ void AFireSword::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 void AFireSword::DeactivateForce()
 {
 	bIsForcing = false;
+	bIsHitEnemy = false;
 }
 
 // Called when the game starts or when spawned
