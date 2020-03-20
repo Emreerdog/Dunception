@@ -46,4 +46,5 @@ private:
 	ADefaultCharacter* OwnerGuy;
 	FTimerHandle ForceTimer;
 	bool bIsForcing = false;
+	float OwnerGuyYaw = 0.0f;
 };

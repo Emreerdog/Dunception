@@ -69,12 +69,13 @@ void AFireSword::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	if (tempEnemy) {
 		bIsHitEnemy = true;
 		bIsForcing = true;
-		if (OwnerGuy->GetActorRotation().Yaw <= 0) {
-			GetWorldTimerManager().SetTimer(ForceTimer, this, &AFireSword::DeactivateForce, 0.50f);
+		OwnerGuyYaw = OwnerGuy->GetActorRotation().Yaw;
+		if (OwnerGuyYaw <= 0.0f) {
+			GetWorldTimerManager().SetTimer(ForceTimer, this, &AFireSword::DeactivateForce, 0.10f);
 			tempEnemy->DecreaseHealth(50.0f, true, FVector(0.0f, -130.0f, 0.0f), 0.1f);
 		}
 		else {
-			GetWorldTimerManager().SetTimer(ForceTimer, this, &AFireSword::DeactivateForce, 0.50f);
+			GetWorldTimerManager().SetTimer(ForceTimer, this, &AFireSword::DeactivateForce, 0.10f);
 			tempEnemy->DecreaseHealth(50.0f, true, FVector(0.0f, 130.0f, 0.0f), 0.1f);
 		}
 	}
@@ -104,7 +105,12 @@ void AFireSword::Tick(float DeltaTime)
 
 	W_HitBox->SetWorldLocation(OwnerGuy->DamageBoxLocation->GetComponentLocation());
 	if (bIsForcing) {
-		OwnerGuy->GetCharacterMovement()->AddImpulse(FVector(0.0f, -150.0f, 0.0f));
+		if (OwnerGuyYaw <= 0.0f) {
+			OwnerGuy->GetCharacterMovement()->AddImpulse(FVector(0.0f, -35.0f, 0.0f));
+		}
+		else {
+			OwnerGuy->GetCharacterMovement()->AddImpulse(FVector(0.0f, 35.0f, 0.0f));
+		}
 	}
 }
 
