@@ -170,7 +170,7 @@ void ADefaultCharacter::Run()
 	}
 
 	movementStates.bIsRunning = true;
-	GetCharacterMovement()->MaxWalkSpeed = 850.0f;
+	GetCharacterMovement()->MaxWalkSpeed += 250.0f;
 }
 
 void ADefaultCharacter::StopRun()
@@ -185,6 +185,12 @@ void ADefaultCharacter::_Jump()
 		bPressedJump = true;
 		UE_LOG(LogTemp, Warning, TEXT("Jump Executed"));
 	}
+}
+
+void ADefaultCharacter::MovementToNormal()
+{
+	GetWorldTimerManager().ClearTimer(MovementSlowTimer);
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 }
 
 void ADefaultCharacter::BasicAttack()
@@ -391,5 +397,11 @@ void ADefaultCharacter::DecreaseHealth(float DecreaseAmount)
 void ADefaultCharacter::SetHealth(float NewHealth)
 {
 	Health = NewHealth;
+}
+
+void ADefaultCharacter::DecreaseMovement(float DecreaseAmount, float TimeInSeconds)
+{
+	GetCharacterMovement()->MaxWalkSpeed -= DecreaseAmount;
+	GetWorldTimerManager().SetTimer(MovementSlowTimer, this, &ADefaultCharacter::MovementToNormal, TimeInSeconds);
 }
 

@@ -83,14 +83,17 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void ArmorHitSound();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "DefaultCharacter effection functions", BlueprintCallable)
 		float GetHealth();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "DefaultCharacter effection functions", BlueprintCallable)
 		void DecreaseHealth(float DecreaseAmount);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "DefaultCharacter effection functions", BlueprintCallable)
 		void SetHealth(float NewHealth);
+
+	UFUNCTION(Category = "DefaultCharacter effection functions", BlueprintCallable)
+		void DecreaseMovement(float DecreaseAmount, float TimeInSeconds);
 
 private:
 	// Side movement of character
@@ -106,6 +109,9 @@ private:
 	// Z movement of character
 	UFUNCTION()
 		void _Jump();
+
+	UFUNCTION()
+		void MovementToNormal();
 
 	UFUNCTION()
 		void BasicAttack();
@@ -155,6 +161,7 @@ private:
 	FTimerHandle ComboTimer;
 	FTimerHandle AttackMomentTimer;
 	FTimerHandle ComboToBaseTimer;
+	FTimerHandle MovementSlowTimer;
 	bool bIsMerchantOverlap;
 	bool bIsInteractionPressed;
 	float Health;

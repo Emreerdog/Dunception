@@ -26,7 +26,7 @@ public:
 		float GetHealth();
 
 	UFUNCTION(Category = "Enemy Effect Functions", BlueprintCallable)
-		void DecreaseMovement(float DecreaseAmount, float Time);
+		void DecreaseMovement(float DecreaseAmount, float TimeInSeconds);
 
 	UFUNCTION(Category = "Enemy Effect Functions", BlueprintCallable)
 		void DecreaseHealth(float DecreaseAmount, bool bImpulseOnImpact = false, FVector ImpulseDirection = FVector::ZeroVector, float ImpulseTime = 0.0f);
