@@ -31,7 +31,7 @@ AFireSword::AFireSword()
 	FireSword->SetSkeletalMesh(Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), NULL, *LastDir)));
 
 	W_HitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Damage Box"));
-	W_HitBox->bHiddenInGame = false;
+	W_HitBox->bHiddenInGame = true;
 	W_HitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	W_HitBox->RelativeScale3D = FVector(1.25f, 3.0f, 1.75f);
 	W_HitBox->RelativeLocation = FVector(0.0f, 0.0f, 90.0f);
@@ -69,8 +69,14 @@ void AFireSword::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	if (tempEnemy) {
 		bIsHitEnemy = true;
 		bIsForcing = true;
-		GetWorldTimerManager().SetTimer(ForceTimer, this, &AFireSword::DeactivateForce, 0.50f);
-		tempEnemy->DecreaseHealth(50.0f, true, FVector(0.0f, 130.0f, 0.0f), 0.1f);
+		if (OwnerGuy->GetActorRotation().Yaw <= 0) {
+			GetWorldTimerManager().SetTimer(ForceTimer, this, &AFireSword::DeactivateForce, 0.50f);
+			tempEnemy->DecreaseHealth(50.0f, true, FVector(0.0f, -130.0f, 0.0f), 0.1f);
+		}
+		else {
+			GetWorldTimerManager().SetTimer(ForceTimer, this, &AFireSword::DeactivateForce, 0.50f);
+			tempEnemy->DecreaseHealth(50.0f, true, FVector(0.0f, 130.0f, 0.0f), 0.1f);
+		}
 	}
 	// DisableDamageBox();
 	// W_HitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);

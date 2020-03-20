@@ -207,8 +207,8 @@ void ADefaultCharacter::BasicAttack()
 				movementStates.bAbleToMove = false;
 				combatStates.bIsA1 = true;
 				WeaponHolder->FirstAttack();
-				GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.45f);
-				GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::SecondAttack, 0.9f);
+				GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.275f);
+				GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::SecondAttack, 0.45f);
 				combatStates.bIsBasicAttack = false;
 			}
 		}
@@ -232,12 +232,12 @@ void ADefaultCharacter::SecondAttack()
 	if ((combatStates.bIsBasicAttack && combatStates.bIsOnSequence) && combatStates.bIsA1) {
 		WeaponHolder->SecondAttack();
 		combatStates.bIsA2 = true;
-		GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.65f);
-		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::ThirdAttack, 1.0f);
+		GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.325f);
+		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::ThirdAttack, 0.5f);
 		combatStates.bIsBasicAttack = false;
 	}
 	else {
-		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.15f);
+		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.055f);
 	}
 }
 
@@ -247,11 +247,11 @@ void ADefaultCharacter::ThirdAttack()
 	if ((combatStates.bIsBasicAttack && combatStates.bIsOnSequence) && (combatStates.bIsA1 && combatStates.bIsA2)) {
 		combatStates.bIsA3 = true;
 		WeaponHolder->ThirdAttack();
-		GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.70f);
-		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::BackToFirstAttack, 1.2f);
+		GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.35f);
+		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::BackToFirstAttack, 0.6f);
 	}
 	else {
-		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.65f);
+		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.325f);
 	}
 }
 
@@ -270,7 +270,7 @@ void ADefaultCharacter::BackToFirstAttack()
 		BasicAttack();
 	}
 	else {
-		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.9f);
+		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.45f);
 	}
 	//if (combatStates.bIsBasicAttack) {
 	//	// If three of the attacks are zero it means that we were at idle state

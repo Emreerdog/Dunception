@@ -15,12 +15,11 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Health = 100.0f;
+	Health = 400.0f;
 	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 	GetCharacterMovement()->Mass = 2.0f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
-
 }
 
 void AEnemyCharacter::SetHealth(float NewHealth)
