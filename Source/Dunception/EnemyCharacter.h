@@ -25,8 +25,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 		float GetHealth();
 
+	UFUNCTION(BlueprintCallable)
+		void DecreaseMovement(float DecreaseAmount, float Time);
+
 	UFUNCTION()
 		void DecreaseHealth(float DecreaseAmount, bool bImpulseOnImpact = false, FVector ImpulseDirection = FVector::ZeroVector, float ImpulseTime = 0.0f);
+
+	UFUNCTION(BlueprintCallable)
+		void SetMass(float MassAmount);
+
+	UFUNCTION(BlueprintCallable)
+		float GetMass();
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,5 +53,6 @@ private:
 	float ImpulseTimer = 0.0f;
 	float Time = 0.0f;;
 	bool bIsImpulse = false;
+	bool bImpulse = false;
 	FVector ImpulseDir = FVector::ZeroVector;
 };

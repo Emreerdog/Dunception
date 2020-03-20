@@ -13,12 +13,13 @@ FCombatStates::~FCombatStates()
 
 void FCombatStates::AttacksToDefault()
 {
-	bool bIsWeaponWielded = false; 
-	bool bIsBasicAttack = false; 
-	bool bIsOnSequence = false;
-	bool bIsA1 = false;
-	bool bIsA2 = false;
-	bool bIsA3 = false;
-	float AttackTimer = 0.0f; 
-	float PreparingTime = 0.0f;
+	bIsWeaponWielded = false; 
+	bIsBasicAttack = false; 
+	bIsOnSequence = false;
+	bIsBasicAttackForAnim = false;
+	bIsA1 = false;
+	bIsA2 = false;
+	bIsA3 = false;
+	AttackTimer = 0.0f; 
+	PreparingTime = 0.0f;
 }

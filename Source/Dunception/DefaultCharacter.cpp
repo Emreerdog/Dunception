@@ -98,9 +98,9 @@ void ADefaultCharacter::Tick(float DeltaTime)
 		movementStates.bIsOnAir = false;
 	}
 	
-	// UE_LOG(LogTemp, Warning, TEXT("%d%d%d%d%d"), combatStates.bIsBasicAttack, combatStates.bIsOnSequence, combatStates.bIsA1, combatStates.bIsA2, combatStates.bIsA3);
+	UE_LOG(LogTemp, Warning, TEXT("%d%d%d%d%d"), combatStates.bIsBasicAttack, combatStates.bIsOnSequence, combatStates.bIsA1, combatStates.bIsA2, combatStates.bIsA3);
 	// UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), GetWorldTimerManager().GetTimerRemaining(ComboTimer));
+	// UE_LOG(LogTemp, Warning, TEXT("%f"), GetWorldTimerManager().GetTimerRemaining(ComboTimer));
 	// UE_LOG(LogTemp, Warning, TEXT("%f"), GetCharacterMovement()->Mass);
 	if (Health <= 0.0f) {
 		DisableInput(GetController()->CastToPlayerController());
@@ -192,6 +192,7 @@ void ADefaultCharacter::BasicAttack()
 	if (combatStates.bIsWeaponWielded) 
 	{
 		combatStates.bIsBasicAttack = true;
+		combatStates.bIsBasicAttackForAnim = true;
 		if ((!combatStates.bIsA2) && (!combatStates.bIsA3)) 
 		{
 			if (!combatStates.bIsA1) 
@@ -202,6 +203,7 @@ void ADefaultCharacter::BasicAttack()
 				WeaponHolder->FirstAttack();
 				GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.45f);
 				GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::SecondAttack, 0.9f);
+				combatStates.bIsBasicAttack = false;
 			}
 		}
 	}
@@ -226,9 +228,10 @@ void ADefaultCharacter::SecondAttack()
 		combatStates.bIsA2 = true;
 		GetWorldTimerManager().SetTimer(AttackMomentTimer, this, &ADefaultCharacter::AttackMoment, 0.65f);
 		GetWorldTimerManager().SetTimer(ComboTimer, this, &ADefaultCharacter::ThirdAttack, 1.0f);
+		combatStates.bIsBasicAttack = false;
 	}
 	else {
-		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.233f);
+		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.15f);
 	}
 }
 
@@ -304,9 +307,11 @@ void ADefaultCharacter::StopBasicAttack()
 {
 	if (GetWorldTimerManager().GetTimerRemaining(ComboTimer) <= 0.2f) {
 		combatStates.bIsBasicAttack = true;
+		combatStates.bIsBasicAttackForAnim = true;
 	}
 	else {
 		combatStates.bIsBasicAttack = false;
+		combatStates.bIsBasicAttackForAnim = false;
 	}
 }
 
@@ -317,6 +322,7 @@ void ADefaultCharacter::AttacksToDefault()
 	combatStates.bIsA1 = false;
 	combatStates.bIsA2 = false;
 	combatStates.bIsA3 = false;
+	combatStates.bIsBasicAttackForAnim = false;
 }
 
 void ADefaultCharacter::WeaponWield()
@@ -325,6 +331,18 @@ void ADefaultCharacter::WeaponWield()
 		combatStates.bIsWeaponWielded = true;
 		GetWorldTimerManager().SetTimer(WieldDelayTimerHandle, this, &ADefaultCharacter::WieldTheWeapon, 0.8f / 2);
 	}
+	else {
+		combatStates.bIsWeaponWielded = false;
+		GetWorldTimerManager().SetTimer(WieldDelayTimerHandle, this, &ADefaultCharacter::UnWieldTheWeapon, 0.8f / 2);
+	}
+}
+
+void ADefaultCharacter::UnWieldTheWeapon()
+{
+	GetWorldTimerManager().ClearTimer(WieldDelayTimerHandle);
+	RightHand->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponPocket"));
+	RightHand->SetRelativeLocation(FVector(-0.618f, -36.840001f, 3.030949f));
+	RightHand->SetRelativeRotation(FRotator(-9.800f, -1.75f, -259.8f));
 }
 
 void ADefaultCharacter::WieldTheWeapon()

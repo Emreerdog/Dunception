@@ -135,6 +135,9 @@ private:
 		void WeaponWield();
 
 	UFUNCTION()
+		void UnWieldTheWeapon();
+
+	UFUNCTION()
 		void WieldTheWeapon();
 
 	UFUNCTION()
@@ -155,4 +158,5 @@ private:
 	bool bIsMerchantOverlap;
 	bool bIsInteractionPressed;
 	float Health;
+
 };

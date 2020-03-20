@@ -31,12 +31,26 @@ float AEnemyCharacter::GetHealth()
 	return Health;
 }
 
+void AEnemyCharacter::DecreaseMovement(float DecreaseAmount, float Time)
+{
+}
+
 void AEnemyCharacter::DecreaseHealth(float DecreaseAmount, bool bImpulseOnImpact, FVector ImpulseDirection, float ImpulseTime)
 {
 	bIsImpulse = bImpulseOnImpact;
 	ImpulseTimer = ImpulseTime;
 	ImpulseDir = ImpulseDirection;
 	Health -= DecreaseAmount;
+}
+
+void AEnemyCharacter::SetMass(float MassAmount)
+{
+	GetCharacterMovement()->Mass = MassAmount;
+}
+
+float AEnemyCharacter::GetMass()
+{
+	return GetCharacterMovement()->Mass;
 }
 
 // Called when the game starts or when spawned
@@ -72,8 +86,8 @@ void AEnemyCharacter::Tick(float DeltaTime)
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		GetMesh()->SetSimulatePhysics(true);
 		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
-		if (!bIsDead) {
-			bIsDead = true;
+		if (!bImpulse) {
+			bImpulse = true;
 			if (tempGMode == nullptr) {
 				UE_LOG(LogTemp, Warning, TEXT("Game mode doesn't handled"));
 			}
@@ -83,7 +97,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 					UE_LOG(LogTemp, Warning, TEXT("Enemy doesn't see our guy"));
 				}
 				else {
-					GetMesh()->AddImpulse(FVector(0.0f, 50000.0f, 1000.0f), FName("head"));
+					GetMesh()->AddImpulse(FVector(0.0f, 50000.0f, 1000.0f));
 					// GetMesh()->AddRadialImpulse(tempOurGuy->GetMesh()->GetComponentLocation() + 50.0f, 1000.0f, 100000.0f, ERadialImpulseFalloff::RIF_Constant);
 				}
 			}

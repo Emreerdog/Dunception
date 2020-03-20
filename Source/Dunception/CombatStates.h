@@ -29,6 +29,9 @@ struct DUNCEPTION_API FCombatStates
 	bool bIsOnSequence = false;
 
 	UPROPERTY(BlueprintReadWrite)
+	bool bIsBasicAttackForAnim = false; // Don't ask me it is weirdly necessary
+
+	UPROPERTY(BlueprintReadWrite)
 	bool bIsA1 = false;
 
 	UPROPERTY(BlueprintReadWrite)
