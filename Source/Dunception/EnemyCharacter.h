@@ -19,22 +19,22 @@ public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Enemy Effect Functions", BlueprintCallable)
 		void SetHealth(float NewHealth); // Different from decreasehealth
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Enemy Effect Functions", BlueprintCallable)
 		float GetHealth();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Enemy Effect Functions", BlueprintCallable)
 		void DecreaseMovement(float DecreaseAmount, float Time);
 
-	UFUNCTION()
+	UFUNCTION(Category = "Enemy Effect Functions", BlueprintCallable)
 		void DecreaseHealth(float DecreaseAmount, bool bImpulseOnImpact = false, FVector ImpulseDirection = FVector::ZeroVector, float ImpulseTime = 0.0f);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Enemy Effect Functions", BlueprintCallable)
 		void SetMass(float MassAmount);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Enemy Effect Functions", BlueprintCallable)
 		float GetMass();
 
 protected:
@@ -49,10 +49,15 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+
+	UFUNCTION()
+		void MovementToNormal();
+
 	float Health = 100.0f;
 	float ImpulseTimer = 0.0f;
 	float Time = 0.0f;;
 	bool bIsImpulse = false;
 	bool bImpulse = false;
 	FVector ImpulseDir = FVector::ZeroVector;
+	FTimerHandle MovementSlowTimer;
 };

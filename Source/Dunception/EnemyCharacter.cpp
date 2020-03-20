@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "DunceptionGameModeBase.h"
 #include "DefaultCharacter.h"
+#include "TimerManager.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -18,6 +19,7 @@ AEnemyCharacter::AEnemyCharacter()
 	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 	GetCharacterMovement()->Mass = 2.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 
 }
 
@@ -31,8 +33,10 @@ float AEnemyCharacter::GetHealth()
 	return Health;
 }
 
-void AEnemyCharacter::DecreaseMovement(float DecreaseAmount, float Time)
+void AEnemyCharacter::DecreaseMovement(float DecreaseAmount, float TimeInSeconds)
 {
+	GetCharacterMovement()->MaxWalkSpeed -= DecreaseAmount;
+	GetWorldTimerManager().SetTimer(MovementSlowTimer, this, &AEnemyCharacter::MovementToNormal, TimeInSeconds);
 }
 
 void AEnemyCharacter::DecreaseHealth(float DecreaseAmount, bool bImpulseOnImpact, FVector ImpulseDirection, float ImpulseTime)
@@ -110,5 +114,11 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AEnemyCharacter::MovementToNormal()
+{
+	GetWorldTimerManager().ClearTimer(MovementSlowTimer);
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 }
 
