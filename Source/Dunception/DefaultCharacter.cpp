@@ -98,7 +98,7 @@ void ADefaultCharacter::Tick(float DeltaTime)
 		movementStates.bIsOnAir = false;
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("%d%d%d%d%d"), combatStates.bIsBasicAttack, combatStates.bIsOnSequence, combatStates.bIsA1, combatStates.bIsA2, combatStates.bIsA3);
+	// UE_LOG(LogTemp, Warning, TEXT("%d%d%d%d%d"), combatStates.bIsBasicAttack, combatStates.bIsOnSequence, combatStates.bIsA1, combatStates.bIsA2, combatStates.bIsA3);
 	// UE_LOG(LogTemp, Warning, TEXT("Movement State: %d\nRun to Stop anim prepared: %d\nVelocity: %f"), movementStates.bSideMovementPressed, movementStates.bRunToIdleAnim, movementStates._Velocity);
 	// UE_LOG(LogTemp, Warning, TEXT("%f"), GetWorldTimerManager().GetTimerRemaining(ComboTimer));
 	// UE_LOG(LogTemp, Warning, TEXT("%f"), GetCharacterMovement()->Mass);
@@ -237,7 +237,7 @@ void ADefaultCharacter::SecondAttack()
 		combatStates.bIsBasicAttack = false;
 	}
 	else {
-		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.055f);
+		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.005f);
 	}
 }
 
