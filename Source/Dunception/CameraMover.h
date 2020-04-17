@@ -9,6 +9,7 @@
 class USplineComponent;
 class UBoxComponent;
 class USpringArmComponent;
+class ADefaultCharacter;
 
 UCLASS()
 class DUNCEPTION_API ACameraMover : public AActor
@@ -40,6 +41,15 @@ public:
 	UFUNCTION()
 		void OnCameraBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+		void OnCameraEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnCameraBeginEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+		void OnCameraEndEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -49,6 +59,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	ADefaultCharacter* OurGuy;
 	USpringArmComponent* PlayerCamera;
-	float timer = 0.0f;
+	float PlayerDistance = 0.0f;
+	bool bIsOurGuyInside = false;
+	bool bIsHeHitLineTrace = false;
 };

@@ -6,6 +6,8 @@
 #include "Engine/GameInstance.h"
 #include "DunceptionGameInstance.generated.h"
 
+class ADefaultCharacter;
+
 /**
  * 
  */
@@ -39,5 +41,16 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 		float WeaponCost;
+
+	UFUNCTION()
+		void SetDunceptionPlayer(AActor* Player);
+
+	UFUNCTION()
+		AActor* GetDunceptionPlayer();
+
+	UFUNCTION()
+		float GetPlayerAlignmentOnX();
+
+	AActor *Player;
 
 };

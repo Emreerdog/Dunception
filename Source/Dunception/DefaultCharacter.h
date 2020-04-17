@@ -41,6 +41,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		USceneComponent* DamageBoxLocation;
 
+	UPROPERTY(EditDefaultsOnly)
+		USceneComponent* CameraLocation;
+
 	// Class that manipulates springarm and camera and make them to do something(Camera shake, zoom out/in, etc.)
 	CameraAttributes CameraHandler;
 

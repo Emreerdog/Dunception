@@ -7,6 +7,7 @@
 #include "Engine.h"
 #include "GenericPlatform/GenericPlatformFile.h"
 #include "HAL/PlatformFilemanager.h"
+#include "DefaultCharacter.h"
 #include "FireSword.h"
 #include "Engine/World.h"
 
@@ -45,6 +46,8 @@ void UDunceptionGameInstance::Init()
 
 	// BA = m_weaponAttributes << BA;
 
+	// Player = Cast<ADefaultCharacter>(GetFirstLocalPlayerController(GetWorld())->GetPawn());
+
 	FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UDunceptionGameInstance::BeginLoadingScreen);
 	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UDunceptionGameInstance::EndLoadingScreen);
 
@@ -59,6 +62,28 @@ FVector2D UDunceptionGameInstance::GetGameViewPortSize()
 	}
 
 	return Result;
+}
+
+void UDunceptionGameInstance::SetDunceptionPlayer(AActor* Player)
+{
+	if (Player != nullptr) {
+		this->Player = Player;
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Player couldn't set"));
+	}
+}
+
+// It should be casted to ADefaultCharacter if the player is not on main menu
+AActor* UDunceptionGameInstance::GetDunceptionPlayer()
+{
+	return Player;
+}
+
+// For alignment of anything
+float UDunceptionGameInstance::GetPlayerAlignmentOnX()
+{
+	return Player->GetActorLocation().X;
 }
 
 void UDunceptionGameInstance::BeginLoadingScreen(const FString& MapName) 

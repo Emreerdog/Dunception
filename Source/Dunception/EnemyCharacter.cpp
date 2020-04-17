@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "DunceptionGameModeBase.h"
 #include "DefaultCharacter.h"
+#include "DunceptionGameInstance.h"
 #include "TimerManager.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -15,7 +16,7 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Health = 400.0f;
+	Health = 100.0f;
 	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 	GetCharacterMovement()->Mass = 2.0f;
@@ -61,6 +62,7 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 	SetActorLocation(FVector(5.0f, GetActorLocation().Y, GetActorLocation().Z));
 }
 
@@ -85,25 +87,34 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 	if (Health <= 0.0f) {
 		static bool bIsDead;
-		ADunceptionGameModeBase* tempGMode = Cast<ADunceptionGameModeBase>(GetWorld()->GetAuthGameMode());
+
+		
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		GetMesh()->SetSimulatePhysics(true);
 		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 		if (!bImpulse) {
 			bImpulse = true;
-			if (tempGMode == nullptr) {
-				UE_LOG(LogTemp, Warning, TEXT("Game mode doesn't handled"));
-			}
-			else {
-				ADefaultCharacter* tempOurGuy = Cast<ADefaultCharacter>(tempGMode->DefaultPawnClass.GetDefaultObject());
-				if (tempOurGuy == nullptr) {
-					UE_LOG(LogTemp, Warning, TEXT("Enemy doesn't see our guy"));
+			UDunceptionGameInstance* GameInst = Cast<UDunceptionGameInstance>(GetGameInstance());
+			if (GameInst) {
+				if (GameInst->GetDunceptionPlayer()) {
+					ADefaultCharacter* tempOurGuy = Cast<ADefaultCharacter>(GameInst->GetDunceptionPlayer());
+					if (tempOurGuy == nullptr) {
+						UE_LOG(LogTemp, Warning, TEXT("Enemy doesn't see our guy"));
+					}
+					else {
+						UE_LOG(LogTemp, Warning, TEXT("%s"), *tempOurGuy->GetActorLocation().ToString());
+						if (tempOurGuy->GetActorRotation().Yaw < 0.0f) {
+							UE_LOG(LogTemp, Warning, TEXT("FUCK MEEEEEE"));
+							GetMesh()->AddImpulse(FVector(0.0f, -50000.0f, 1000.0f));
+						}
+						else {
+							UE_LOG(LogTemp, Warning, TEXT("FUCK YOUUUUUUUUU"));
+							GetMesh()->AddImpulse(FVector(0.0f, 50000.0f, 1000.0f));
+						}
+						// GetMesh()->AddRadialImpulse(tempOurGuy->GetMesh()->GetComponentLocation() + 50.0f, 1000.0f, 100000.0f, ERadialImpulseFalloff::RIF_Constant);
+					}
 				}
-				else {
-					GetMesh()->AddImpulse(FVector(0.0f, 50000.0f, 1000.0f));
-					// GetMesh()->AddRadialImpulse(tempOurGuy->GetMesh()->GetComponentLocation() + 50.0f, 1000.0f, 100000.0f, ERadialImpulseFalloff::RIF_Constant);
-				}
-			}
+			}			
 		}
 	}
 }

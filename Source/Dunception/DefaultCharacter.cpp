@@ -22,8 +22,11 @@ ADefaultCharacter::ADefaultCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CameraLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Camera Location"));
+	CameraLocation->SetupAttachment(RootComponent);
+
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
-	SpringArm->SetupAttachment(RootComponent);
+	SpringArm->AttachToComponent(CameraLocation, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
 	// We dont want spring arm to rotate with our player that would look weird
 	SpringArm->bInheritPitch = false;
@@ -71,13 +74,16 @@ void ADefaultCharacter::BeginPlay()
 	SpawnParameters.Instigator = NULL;
 	SpawnParameters.Owner = this;
 
+	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+
 	mSword = GetWorld()->SpawnActor<AFireSword>(SpawnParameters);
 	mSword->AttachToComponent(RightHand, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
 	WeaponHolder = mSword;
 
 	MHUD = Cast<AAMainHUD>(GetController()->CastToPlayerController()->GetHUD());
-
+	
+	Cast<UDunceptionGameInstance>(GetGameInstance())->SetDunceptionPlayer(this);
 }
 
 // Called every frame
