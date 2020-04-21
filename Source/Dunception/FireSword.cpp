@@ -47,19 +47,19 @@ AFireSword::AFireSword()
 void AFireSword::FirstAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Some good shit"));
-	if (GetOwner()) {
-		UE_LOG(LogTemp, Error, TEXT("%s"), *GetOwner()->GetName());
-	}
+	bIsA1 = true;
 }
 
 void AFireSword::SecondAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("This is great"));
+	bIsA2 = true;
 }
 
 void AFireSword::ThirdAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Working properly"));
+	bIsA3 = false;
 }
 
 void AFireSword::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor * OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

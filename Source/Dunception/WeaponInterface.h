@@ -93,6 +93,9 @@ protected:
 	FWeaponAttributes WeaponAttributes;
 	UBoxComponent *W_HitBox;
 	bool bIsHitEnemy;
+	bool bIsA1;
+	bool bIsA2;
+	bool bIsA3;
 private:
 	static TArray<IWeaponInterface*> Weapons;
 };

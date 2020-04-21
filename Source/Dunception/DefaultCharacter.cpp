@@ -115,6 +115,7 @@ void ADefaultCharacter::Tick(float DeltaTime)
 		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 		WeaponHolder->DisableDamageBox();
 	}
+	UE_LOG(LogTemp, Warning, TEXT("%d"), GetCharacterMovement()->IsFalling());
 }
 
 // Called to bind functionality to input
@@ -278,41 +279,6 @@ void ADefaultCharacter::BackToFirstAttack()
 	else {
 		GetWorldTimerManager().SetTimer(ComboToBaseTimer, this, &ADefaultCharacter::ComboToBase, 0.45f);
 	}
-	//if (combatStates.bIsBasicAttack) {
-	//	// If three of the attacks are zero it means that we were at idle state
-	//	if ((!combatStates.AttackStates[0] && !combatStates.AttackStates[1]) && !combatStates.AttackStates[2]) {
-	//		// Make first attack true
-	//		combatStates.AttackStates[0] = true;
-	//	}
-	//	if (combatStates.AttackStates[0]) {
-	//		combatStates.AttackTimer += GetWorld()->DeltaTimeSeconds;
-	//		float Result = combatStates.AttackAnimLength[0] - combatStates.AttackTimer;
-	//		// UE_LOG(LogTemp, Warning, TEXT("Attack1:%d AttackTimer:%f Result:%f %f"), combatStates.AttackStates[0], combatStates.AttackTimer, Result, combatStates.PreparingTime);
-	//		if ((Result <= 0.2f)) {
-	//			combatStates.PreparingTime += GetWorld()->DeltaTimeSeconds;
-	//			if (combatStates.PreparingTime >= 0.19f) {
-	//				UE_LOG(LogTemp, Warning, TEXT("Attack1:%d AttackTimer:%f Result:%f %f"), combatStates.AttackStates[0], combatStates.AttackTimer, Result, combatStates.PreparingTime);
-	//				combatStates.AttackStates[0] = false;
-	//				combatStates.AttackStates[1] = true;
-	//				combatStates.AttackTimer = 0.0f;
-	//				combatStates.PreparingTime = 0.0f;
-	//				UE_LOG(LogTemp, Warning, TEXT("Attack1:%d AttackTimer:%f Result:%f %f"), combatStates.AttackStates[0], combatStates.AttackTimer, Result, combatStates.PreparingTime);
-	//			}
-	//		}
-	//	}
-	//	else if (combatStates.AttackStates[1]) {
-	//		UE_LOG(LogTemp, Warning, TEXT("LOL"));
-
-	//		combatStates.AttackTimer += GetWorld()->DeltaTimeSeconds;
-	//		float Result = combatStates.AttackAnimLength[0] - combatStates.AttackTimer;
-	//		if ((Result <= 0.2f)) {
-
-	//		}
-	//	}
-	//	else if (combatStates.AttackStates[2]) {
-
-	//	}
-	//}	
 }
 
 void ADefaultCharacter::StopBasicAttack()
