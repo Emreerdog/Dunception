@@ -19,6 +19,7 @@ public:
 	bool bSideMovementPressed = false; // It'll be true when the movement key is pressed
 	bool bIsRunning = false;
 	bool bAbleToMove = true;
+	bool bIsSlowed = false;
 
 private:
 

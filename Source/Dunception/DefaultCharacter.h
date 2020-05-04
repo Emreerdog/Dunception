@@ -44,6 +44,27 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		USceneComponent* CameraLocation;
 
+	UPROPERTY(EditDefaultsOnly)
+		USkeletalMeshComponent* HelmetMesh;
+
+	UPROPERTY(EditDefaultsOnly)
+		USkeletalMeshComponent* ShoulderRightMesh;
+
+	UPROPERTY(EditDefaultsOnly)
+		USkeletalMeshComponent* ShoulderLeftMesh;
+
+	UPROPERTY(EditDefaultsOnly)
+		USkeletalMeshComponent* BreastMesh;
+
+	UPROPERTY(EditDefaultsOnly)
+		USkeletalMeshComponent* GloveMesh;
+
+	UPROPERTY(EditDefaultsOnly)
+		USkeletalMeshComponent* PantMesh;
+
+	UPROPERTY(EditDefaultsOnly)
+		USkeletalMeshComponent* BootMesh;
+
 	// Class that manipulates springarm and camera and make them to do something(Camera shake, zoom out/in, etc.)
 	CameraAttributes CameraHandler;
 

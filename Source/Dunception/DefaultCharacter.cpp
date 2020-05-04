@@ -58,6 +58,22 @@ ADefaultCharacter::ADefaultCharacter()
 	DamageBoxLocation = CreateDefaultSubobject<USceneComponent>(TEXT("DamageBoxLocation"));
 	DamageBoxLocation->SetupAttachment(GetMesh());
 
+	HelmetMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Helmet"));
+	ShoulderRightMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Shoulder Right"));
+	ShoulderLeftMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Shoulder Left"));
+	BreastMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Breast"));
+	GloveMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Glove"));
+	PantMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Pant"));
+	BootMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Boot"));
+
+	HelmetMesh->AttachTo(GetMesh());
+	ShoulderRightMesh->AttachTo(GetMesh());
+	ShoulderLeftMesh->AttachTo(GetMesh());
+	BreastMesh->AttachTo(GetMesh());
+	GloveMesh->AttachTo(GetMesh());
+	PantMesh->AttachTo(GetMesh());
+	BootMesh->AttachTo(GetMesh());
+
 	Health = 100.0f;
 
 	// GetController()->CastToPlayerController()->GetHUD()->Destroy();

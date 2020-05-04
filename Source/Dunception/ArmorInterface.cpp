@@ -4,3 +4,8 @@
 #include "ArmorInterface.h"
 
 // Add default functionality here for any IArmorInterface functions that are not pure virtual.
+
+void IArmorInterface::SetArmorAttributes(FArmorAttributes NewAttributes)
+{
+	ArmorAttributes = NewAttributes;
+}
